@@ -26,14 +26,18 @@ Boot the patched Disk 1 with the **original Disk 2** using the
 
 ## Performance
 
-Stationary Mulholland benchmark in FS-UAE 3.2.35, PAL/AGA/68060:
+Stationary Mulholland benchmark in FS-UAE 3.2.35 (PAL):
 
-| Metric | 1.2.0 | 1.3.0 |
-| --- | ---: | ---: |
-| Mean frame time | 80.13 ms | 70.28 ms |
-| FPS | 12.48 | 14.23 |
+| Metric | Original (A500) | 1.2.0 (68060) | 1.3.0 (68060) |
+| --- | ---: | ---: | ---: |
+| Mean frame time | 579.56 ms | 80.13 ms | 70.28 ms |
+| FPS | 1.73 | 12.48 | 14.23 |
 
-**14% higher FPS** in this scene from reduced buffer-swap waiting.
+Original: 68000/OCS, Kickstart 1.3, 512 KiB Chip + 512 KiB Slow RAM.
+Versions 1.2.0 and 1.3.0 use the A1200/68060 configuration listed above.
+Compared with the original A500 configuration, **1.3.0 on 68060 delivers
+724.6% higher FPS**.
+**1.3.0 delivers 14% higher FPS than 1.2.0** from reduced buffer-swap waiting.
 
 [Changelog](CHANGELOG.md) · [Checksums](FS-UAE.md#checksums) · [Patch source](src)
 
