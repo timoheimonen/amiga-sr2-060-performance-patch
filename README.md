@@ -39,7 +39,7 @@ Compared with the original A500 configuration, **1.3.0 on 68060 delivers
 724.6% higher FPS**.
 **1.3.0 delivers 14% higher FPS than 1.2.0** from reduced buffer-swap waiting.
 
-[Changelog](CHANGELOG.md) · [Checksums](FS-UAE.md#checksums) · [Patch source](src)
+[Changelog](CHANGELOG.md) · [Checksums](FS-UAE.md#checksums) · [Patch details](PATCH.md) · [Patch source](src)
 
 Timo Heimonen (timo.heimonen@proton.me) · [MIT License](LICENSE)
 
