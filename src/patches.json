@@ -1,0 +1,170 @@
+{
+  "format_version": 1,
+  "target": "Kickstart 3.1 / A1200 AGA / MC68060 (integer, no FPU/MMU)",
+  "source": {
+    "program": "STREET_ROD",
+    "size": 270116,
+    "sha256": "a345fb91144d1ee577dcd5c80a8a8aa3b0a4e777ed9b5b4308d3a2b36d8df3a8",
+    "raw_size": 312144,
+    "raw_sha256": "8804019ccd0de68037ad83357dc5cb093c54e2f701b966f73033bc8a5fa575ff"
+  },
+  "hunk_growths": [
+    {
+      "hunk": 23,
+      "ghidra_raw_base": "0x1123c",
+      "hunk_header_table_file_offset": "0x70",
+      "hunk_record_size_file_offset": "0xf6f4",
+      "payload_file_offset": "0x11208",
+      "original_size": "0x1b10",
+      "patched_size": "0x1b7c",
+      "payload_size": 108,
+      "payload_source": "SR2_AudioTimerSoftint.s",
+      "payload_sha256": "35168b87e1e4b783f8ee016d75c5cf7f7168d1c38b5b3ffd62ca714a9591a160",
+      "description": "Defer the complete original CIA-B audio timer handler to Exec software-interrupt level"
+    },
+    {
+      "hunk": 0,
+      "ghidra_raw_base": "0x0",
+      "hunk_header_table_file_offset": "0x14",
+      "hunk_record_size_file_offset": "0x144",
+      "payload_file_offset": "0x3494",
+      "original_size": "0x334c",
+      "patched_size": "0x33a8",
+      "payload_size": 92,
+      "payload_source": "SR2_InstructionCache.s",
+      "payload_sha256": "5bcac60a4916f3fe7293c43604c1c34d41a6d6e43b34d124e5f69de6c81db04e",
+      "description": "Supervisor-wrapped MC68060 instruction-cache lifecycle appended to the entry HUNK"
+    },
+    {
+      "hunk": 42,
+      "ghidra_raw_base": "0x1c27c",
+      "hunk_header_table_file_offset": "0xbc",
+      "hunk_record_size_file_offset": "0x1b3cc",
+      "payload_file_offset": "0x21014",
+      "original_size": "0x5c44",
+      "patched_size": "0x5c58",
+      "payload_size": 20,
+      "payload_source": "SR2_CoveredSpanEntry.s",
+      "payload_sha256": "702637209e8e62e3d7e9390a20359e7884be01ce6da69aa57d57b6017d92ca60",
+      "description": "Covered-span batch entry appended to its original code HUNK"
+    },
+    {
+      "hunk": 45,
+      "ghidra_raw_base": "0x222c4",
+      "hunk_header_table_file_offset": "0xc8",
+      "hunk_record_size_file_offset": "0x215ac",
+      "payload_file_offset": "0x24be0",
+      "original_size": "0x3630",
+      "patched_size": "0x3694",
+      "payload_size": 100,
+      "payload_source": "SR2_ClippedLineTail.s",
+      "payload_sha256": "443a0a656fc77bd5852ea7289783b7bcd7a2ee58d97c2311c713df067b5b2fd9",
+      "description": "KS3.1 graphics.library Move-compatible clipped-line tail"
+    }
+  ],
+  "patches": [
+    {
+      "id": "manual_protection_success_bypass",
+      "ghidra_raw_address": "0x39ddc",
+      "hunk": 61,
+      "hunk_offset": "0xc",
+      "file_offset": "0x35bf8",
+      "expected_hex": "48e72300554f",
+      "replacement_hex": "70014e5d4e75",
+      "description": "Keep LINK and the original stack guard, then return D0=1 success from the manual check, as in the user-supplied patch"
+    },
+    {
+      "id": "ciab_timer_software_interrupt",
+      "ghidra_raw_address": "0x12af0",
+      "hunk": 23,
+      "hunk_offset": "0x18b4",
+      "file_offset": "0x10fac",
+      "expected_hex": "4e55fff4",
+      "replacement_hex": "6000025a",
+      "payload_hunk": 23,
+      "payload_entry_offset": "0x0",
+      "dispatch_opcode_hex": "6000",
+      "description": "Queue original music tick at level 1 so Paula level 4 can interrupt BeginIO"
+    },
+    {
+      "id": "ks31_driving_active_bplcon0",
+      "ghidra_raw_address": "0x9a58",
+      "hunk": 10,
+      "hunk_offset": "0x440",
+      "file_offset": "0xa3a4",
+      "expected_hex": "6706",
+      "replacement_hex": "671a",
+      "description": "Select the first active BPLCON0 in the KS3.1 AGA Copper list for four-plane road; retain six-plane cockpit at the split"
+    },
+    {
+      "id": "driving_swap_at_vertical_blank",
+      "ghidra_raw_address": "0x9b5a",
+      "hunk": 10,
+      "hunk_offset": "0x542",
+      "file_offset": "0xa4a6",
+      "expected_hex": "4eaefe802e00",
+      "replacement_hex": "4eaefef2600c",
+      "description": "WaitTOF before publishing the next Copper bitplane pointers and recycling the old road buffer; skip the visible-line polling loop"
+    },
+    {
+      "id": "instruction_cache_entry",
+      "ghidra_raw_address": "0x0",
+      "hunk": 0,
+      "hunk_offset": "0x0",
+      "file_offset": "0x148",
+      "expected_hex": "48e77efe",
+      "replacement_hex": "6000334a",
+      "payload_hunk": 0,
+      "payload_entry_offset": "0x0",
+      "dispatch_opcode_hex": "6000",
+      "description": "Enable the MC68060 instruction cache after LoadSeg through exec.Supervisor"
+    },
+    {
+      "id": "instruction_cache_exit",
+      "ghidra_raw_address": "0x1e4",
+      "hunk": 0,
+      "hunk_offset": "0x1e4",
+      "file_offset": "0x32c",
+      "expected_hex": "4cdf7f7e",
+      "replacement_hex": "60003182",
+      "payload_hunk": 0,
+      "payload_entry_offset": "0x1c",
+      "dispatch_opcode_hex": "6000",
+      "description": "Restore the incoming CACR before returning to Kickstart 3.1"
+    },
+    {
+      "id": "covered_span_batch_entry",
+      "ghidra_raw_address": "0x1dd20",
+      "hunk": 42,
+      "hunk_offset": "0x1aa4",
+      "file_offset": "0x1ce74",
+      "expected_hex": "48e737003e2d",
+      "replacement_hex": "6100419e4e71",
+      "payload_hunk": 42,
+      "payload_entry_offset": "0x0",
+      "description": "Enter the framebuffer-verified 68060 covered-span optimization"
+    },
+    {
+      "id": "covered_span_restore_a3",
+      "ghidra_raw_address": "0x1ded6",
+      "hunk": 42,
+      "hunk_offset": "0x1c5a",
+      "file_offset": "0x1d02a",
+      "expected_hex": "00ec",
+      "replacement_hex": "08ec",
+      "description": "Restore the A3 batch marker with the original saved registers"
+    },
+    {
+      "id": "clipped_line_tail_dispatch",
+      "ghidra_raw_address": "0x2263e",
+      "hunk": 45,
+      "hunk_offset": "0x37a",
+      "file_offset": "0x2192a",
+      "expected_hex": "4eba321e302d",
+      "replacement_hex": "610032b44e71",
+      "payload_hunk": 45,
+      "payload_entry_offset": "0x0",
+      "description": "Use the KS3.1 graphics.library 40.24 Move-compatible tail inside covered-span batches"
+    }
+  ]
+}
