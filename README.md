@@ -7,7 +7,7 @@ cache, and fixes audio, display and manual-protection compatibility.
 
 - Python 3.10+; no extra packages or assembler required.
 - PAL A1200/AGA, MC68060, 2 MiB Chip RAM, 8 MiB Fast RAM and Kickstart 3.1
-  A1200 rev 40.68. Tested with FS-UAE 3.2.35; physical hardware is unverified.
+  A1200 rev 40.68.
 - Original Disk 1 and Disk 2 from [Street Rod Online](https://www.streetrodonline.com/downloads/)
   (**Street Rod 2**, **Amiga**). Supply your own Kickstart ROM.
 
