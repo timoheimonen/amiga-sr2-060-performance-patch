@@ -1,7 +1,9 @@
 # Street Rod 2 — KS3.1 / AGA / 68060 patcher
 
-**Version 1.3.0** improves drawing and frame timing, enables the instruction
-cache, and fixes audio, display and manual-protection compatibility.
+**Version 1.4.0** caps driving at approximately **16.7 FPS**. It waits only
+when a frame finishes early; slower frames get no extra cap delay.
+Includes drawing optimizations, instruction-cache support, and audio,
+display and manual-protection compatibility fixes.
 
 ## Requirements
 
@@ -28,16 +30,16 @@ Boot the patched Disk 1 with the **original Disk 2** using the
 
 Stationary Mulholland benchmark in FS-UAE 3.2.35 (PAL):
 
-| Metric | Original (A500) | 1.2.0 (68060) | 1.3.0 (68060) |
-| --- | ---: | ---: | ---: |
-| Mean frame time | 579.56 ms | 80.13 ms | 70.28 ms |
-| FPS | 1.73 | 12.48 | 14.23 |
+| Metric | Original (A500) | 1.2.0 (68060) | 1.3.0 (68060) | 1.4.0 (68060) |
+| --- | ---: | ---: | ---: | ---: |
+| Mean frame time | 579.56 ms | 80.13 ms | 70.28 ms | 70.28 ms |
+| FPS | 1.73 | 12.48 | 14.23 | 14.23 |
 
 Original: 68000/OCS, Kickstart 1.3, 512 KiB Chip + 512 KiB Slow RAM.
-Versions 1.2.0 and 1.3.0 use the A1200/68060 configuration listed above.
-Compared with the original A500 configuration, **1.3.0 on 68060 delivers
-724.6% higher FPS**.
-**1.3.0 delivers 14% higher FPS than 1.2.0** from reduced buffer-swap waiting.
+Versions 1.2.0–1.4.0 use the A1200/68060 configuration listed above.
+**1.4.0 retains 1.3.0's performance in this scene**, about 14% higher FPS
+than 1.2.0 and 724.6% higher than the original A500 configuration.
+The cap limits faster driving scenes to one frame per three PAL fields.
 
 [Changelog](CHANGELOG.md) · [Checksums](FS-UAE.md#checksums) · [Patch details](PATCH.md) · [Patch source](src)
 

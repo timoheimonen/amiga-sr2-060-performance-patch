@@ -21,7 +21,7 @@ import sys
 import tempfile
 
 
-VERSION = "1.3.0"
+VERSION = "1.4.0"
 
 BLOCK_SIZE = 512
 BLOCK_LONGS = BLOCK_SIZE // 4
@@ -44,13 +44,13 @@ SOURCE_ADF_SHA256 = (
     "4444796c1c9337baf16dffa982f1e66dc579a04d3e80a8ffa6a483b648e7bb1c"
 )
 PATCHED_ADF_SHA256 = (
-    "5bbd2f0c2c883e1fdc66f70e59bb85ba36162d6c9fa564b6db8416a70802b2e9"
+    "6dda31396f559358d493cae80b20b00d34333d7509932399a3dafd178e2ec837"
 )
 SOURCE_PROGRAM_SHA256 = (
     "a345fb91144d1ee577dcd5c80a8a8aa3b0a4e777ed9b5b4308d3a2b36d8df3a8"
 )
 PATCHED_PROGRAM_SHA256 = (
-    "39d143929ecede36d24d9b0a5205f0f41c32929a8e49d117d4dd830bb287ad6b"
+    "1f8bcde0eb404bf44e9d1c7041f04f45ff263026b64e532a641c64fa43d0e4dc"
 )
 TRAINER_SHA256 = (
     "648dbe599570549aea8dd7793d4d405db7f81eb96793e45e52dc22bc575f8e92"
@@ -64,7 +64,7 @@ RELEASE_TIMESTAMP = (17780, 0, 0)
 STARTUP_SEQUENCE = b""";c:SetPatch >NIL: r ;patch system functions
 img.cru
 Echo ""
-Echo "KS3.1/AGA/060 patch 1.3.0 by Timo Heimonen"
+Echo "KS3.1/AGA/060 patch 1.4.0 by Timo Heimonen"
 Echo "(timo.heimonen@proton.me) - 06.09.2026"
 Stack 6000
 SetMap usa1
@@ -75,16 +75,20 @@ LOADWB
 endcli > nil:
 """
 
-# Embedded 1.3.0 helpers; no assembler or external packages required.
+# Embedded 1.4.0 helpers; no assembler or external packages required.
 PAYLOAD_10 = bytes.fromhex(
-    "47fa00ce4a6cbf7667000066203900dff004e088024001ff0c40012c6308"
-    "2c6c9c584eaefef2610000564a4067de2c7800044eaeff88610000464a40"
-    "672cd2872741000436bc0001302cbf9cc1fc003041ecbf9ed1c0226cfb9c"
-    "700b22d851c8fffc4eaeff826000ff204eaeff82609c42532c6c9c584eae"
-    "fef26000fee8203900dff004e088024001ff0c40000865307e000c40001e"
-    "630e0c40009665220c40012c621c7e01222cdf4a4a53670e200190ab0004"
-    "6b0a66044a47670470014e7570004e7541fa000a4250426cbf9c4e750000"
-    "000000000000"
+    "2f0247fa01384a6cbf766700009e4a536712202cdf4a90ab00080c80"
+    "000000036d00007c203900dff004e088024001ff0c40012c62000068"
+    "610000804a406700ffce2c7800044eaeff886100006e4a4067442741"
+    "0008d2872741000436bc0001302cbf9cc1fc003041ecbf9ed1c0226c"
+    "fb9c700b22d851c8fffc203900dff00402800001ffff52802740000c"
+    "4eaeff82241f6000fef44eaeff826000ff722c6c9c584eaefef26000"
+    "ff6642532c6c9c584eaefef2241f6000feac222cdf4a243900dff004"
+    "02820001ffffb2acdf4a663c2002e088024001ff0c400008652e7e00"
+    "0c40001e630e0c40009665200c40012c621a7e014a536710200190ab"
+    "00046b0c66044a476706600870014e7570004e75200190ab00080c80"
+    "000000036d0c6e06b4ab000c650470014e7570004e7541fa000c4250"
+    "426cbf9c4e754e7100000000000000000000000000000000"
 )
 
 PAYLOAD_23 = bytes.fromhex(
@@ -120,10 +124,10 @@ PROGRAM_PATCHES = (
     (0x10fac, bytes.fromhex("4e55fff4"), bytes.fromhex("6000025a")),
     # Select the first active BPLCON0 in the KS3.1 AGA Copper list for four-plane road; retain six-plane cockpit at the split
     (0xa3a4, bytes.fromhex("6706"), bytes.fromhex("671a")),
-    # Publish in PAL raster windows 8-30 or 150-300 after the previous road image has been scanned; retain WaitTOF outside driving display
+    # Limit driving to about 16.7 fps using three complete PAL fields and beam phase; retain safe raster publication and non-driving WaitTOF
     (0xa4a6, bytes.fromhex("4eaefe802e00"), bytes.fromhex("600000ac4e71")),
     # Clear publication history when initializing a driving display and replay original buffer-index reset
-    (0xa01e, bytes.fromhex("426cbf9c"), bytes.fromhex("610005f8")),
+    (0xa01e, bytes.fromhex("426cbf9c"), bytes.fromhex("61000662")),
     # Enable the MC68060 instruction cache after LoadSeg through exec.Supervisor
     (0x148, bytes.fromhex("48e77efe"), bytes.fromhex("6000334a")),
     # Restore the incoming CACR before returning to Kickstart 3.1
@@ -137,8 +141,8 @@ PROGRAM_PATCHES = (
 )
 
 HUNK_SIZE_PATCHES = (
-    (0x3c, 0x17c, 0x1b2),
-    (0x9f60, 0x17c, 0x1b2),
+    (0x3c, 0x17c, 0x1cf),
+    (0x9f60, 0x17c, 0x1cf),
     (0x70, 0x6c4, 0x6df),
     (0xf6f4, 0x6c4, 0x6df),
     (0x14, 0xcd3, 0xcea),
@@ -248,7 +252,7 @@ def patch_program(source: bytes) -> bytes:
     for offset, payload in HUNK_PAYLOADS:
         result[offset:offset] = payload
 
-    if len(result) != 270652 or sha256(result) != PATCHED_PROGRAM_SHA256:
+    if len(result) != 270768 or sha256(result) != PATCHED_PROGRAM_SHA256:
         raise PatchError("internal STREET_ROD result verification failed")
     return bytes(result)
 
