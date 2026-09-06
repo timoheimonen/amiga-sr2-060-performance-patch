@@ -1,7 +1,7 @@
 ***************************************************************************
-* Street Rod 2 KS1.3/68060 covered-span entry
+* Street Rod 2 KS3.1/AGA/68060 covered-span entry
 *
-* Direct-HUNK form of the framebuffer-verified performance helper.
+* Framebuffer-verified covered-span helper appended to its original HUNK.
 * The marker lives in A3, so this hunk needs no cross-hunk relocation or
 * private global state.  The original epilogue is patched to restore A3.
 ***************************************************************************

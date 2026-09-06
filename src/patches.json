@@ -10,6 +10,19 @@
   },
   "hunk_growths": [
     {
+      "hunk": 10,
+      "ghidra_raw_base": "0x9618",
+      "hunk_header_table_file_offset": "0x3c",
+      "hunk_record_size_file_offset": "0x9f60",
+      "payload_file_offset": "0xa554",
+      "original_size": "0x5f0",
+      "patched_size": "0x6c8",
+      "payload_size": 216,
+      "payload_source": "SR2_RoadSwap.s",
+      "payload_sha256": "c7e1d7d31ee5aeffe54d70b44dc7f6ae34d08969db324e9d9b5617858e962373",
+      "description": "PAL road-scan-safe buffer publication with one complete scan per image"
+    },
+    {
       "hunk": 23,
       "ghidra_raw_base": "0x1123c",
       "hunk_header_table_file_offset": "0x70",
@@ -97,14 +110,29 @@
       "description": "Select the first active BPLCON0 in the KS3.1 AGA Copper list for four-plane road; retain six-plane cockpit at the split"
     },
     {
-      "id": "driving_swap_at_vertical_blank",
+      "id": "driving_swap_after_road_scan",
       "ghidra_raw_address": "0x9b5a",
       "hunk": 10,
       "hunk_offset": "0x542",
       "file_offset": "0xa4a6",
       "expected_hex": "4eaefe802e00",
-      "replacement_hex": "4eaefef2600c",
-      "description": "WaitTOF before publishing the next Copper bitplane pointers and recycling the old road buffer; skip the visible-line polling loop"
+      "replacement_hex": "600000ac4e71",
+      "description": "Publish in PAL raster windows 8-30 or 150-300 after the previous road image has been scanned; retain WaitTOF outside driving display",
+      "payload_hunk": 10,
+      "payload_entry_offset": "0x0",
+      "dispatch_opcode_hex": "6000"
+    },
+    {
+      "id": "driving_swap_reset",
+      "ghidra_raw_address": "0x96d2",
+      "hunk": 10,
+      "hunk_offset": "0xba",
+      "file_offset": "0xa01e",
+      "expected_hex": "426cbf9c",
+      "replacement_hex": "610005f8",
+      "payload_hunk": 10,
+      "payload_entry_offset": "0xc4",
+      "description": "Clear publication history when initializing a driving display and replay original buffer-index reset"
     },
     {
       "id": "instruction_cache_entry",
@@ -166,5 +194,20 @@
       "payload_entry_offset": "0x0",
       "description": "Use the KS3.1 graphics.library 40.24 Move-compatible tail inside covered-span batches"
     }
-  ]
+  ],
+  "road_swap_audit": {
+    "hunk": 10,
+    "publish_offset": 1610,
+    "complete_offset": 1618,
+    "state_offset": 1728,
+    "early_lines": [
+      8,
+      30
+    ],
+    "late_lines": [
+      150,
+      300
+    ]
+  },
+  "release_version": "1.3.0"
 }
