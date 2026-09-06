@@ -1,9 +1,9 @@
-# Street Rod 2 1.3.0 — assembly patch details
+# Street Rod 2 1.4.0 — assembly patch details
 
 These five 68k assembly helpers implement the audio-timer fix, road-buffer
-timing, covered-span drawing optimization and MC68060 instruction-cache
-management in release 1.3.0. They target PAL A1200/AGA with Kickstart 3.1
-A1200 rev 40.68 and an MC68060.
+timing and frame cap, covered-span drawing optimization and MC68060
+instruction-cache management in release 1.4.0. They target PAL A1200/AGA
+with Kickstart 3.1 A1200 rev 40.68 and an MC68060.
 
 The helpers are appended to the original executable's HUNK code segments.
 Patched `BRA.W` or `BSR.W` instructions redirect execution into them; the
@@ -42,11 +42,12 @@ bit 4 force-loads the timer counter from its latch, and bit 0 restarts it.
 Restarting after the handler makes the next timer period begin after that
 tick's processing finishes.
 
-## SR2_RoadSwap.s — publish buffers outside the road scan
+## SR2_RoadSwap.s — safe buffer publication and driving frame cap
 
 Source: [src/SR2_RoadSwap.s](src/SR2_RoadSwap.s), appended to HUNK 10.
 
-This is the buffer-timing change introduced in 1.3.0. The PAL Copper list
+Release 1.4.0 adds a driving cap of approximately **16.7 FPS** to the
+buffer-timing change introduced in 1.3.0. The PAL Copper list
 loads the road bitplane pointers at line 42, displays the road on lines
 44–143, and switches to independent cockpit bitplanes at line 144. The
 helper uses this split to let drawing into the old road buffer start while
@@ -68,23 +69,41 @@ one records the next field. Replacing that image is allowed only after
 its road scan: in the late window of its first display field, or in a
 later field. Signed modular subtraction handles counter wraparound.
 
-Once eligible, the helper calls Exec `Disable()` and checks both the raster
-position and publication history again. An interrupt could have consumed
+The cap separately tracks `last_publish_field` and `last_publish_beam`.
+`cap_due` requires at least three complete PAL fields since the previous
+publication: at a field difference of exactly three, the beam must also
+have reached the saved position. The longword read from `$dff004`, masked
+with `$1ffff`, includes both vertical and horizontal beam position. The
+VBlank counter is sampled around the beam read; a changed counter rejects
+that snapshot. This prevents a late-to-early raster transition from
+releasing a frame before the full interval has elapsed.
+
+`WaitTOF()` sleeps over whole fields still owed to the cap; the final field
+is checked at beam precision. Frames that already took longer than the
+interval receive no extra cap delay. Each successful publication starts a
+new interval, so a slow frame cannot accumulate fast catch-up frames.
+
+Once eligible, the helper calls Exec `Disable()` and checks the raster
+position, publication history and cap again. An interrupt could have consumed
 the safe window between the first check and `Disable()`. A failed recheck
 calls `Enable()` before retrying; the helper never waits with interrupts
 disabled.
 
 On success, it records the new publication's first display field and
 copies **12 longwords (48 bytes)** of bitplane-pointer data into the Copper
-list, then calls `Enable()`. This updates display pointers, not framebuffer
-pixels. The original `WaitBlit()` and buffer-index toggle precede the
-helper; the original buffer-descriptor exchange follows it.
+list. It samples the beam after this copy and rounds it up by one hardware
+quantum before saving the cap timestamp, then calls `Enable()`. This
+updates display pointers, not framebuffer pixels. The original `WaitBlit()`
+and buffer-index toggle precede the helper; the original buffer-descriptor
+exchange follows it. The helper saves `D2` on entry and restores it before
+either return path, preserving the original caller's registers and stack.
 
 After raster line 300, `WaitTOF()` sleeps across the end of the field.
-Outside the driving display, the helper clears its publication history
-and uses the original `WaitTOF()` and pointer-copy path. `reset_swap` also
-clears the history when a driving display is initialized and replays the
-original buffer-index reset. These raster windows depend on the target
+Outside the driving display, the helper invalidates its publication and
+cap history and uses the original `WaitTOF()` and pointer-copy path.
+`reset_swap` also invalidates the history when a driving display is
+initialized and replays the original buffer-index reset, so the first frame
+has no previous cap deadline. These raster windows depend on the target
 PAL Copper layout.
 
 ## SR2_CoveredSpanEntry.s — mark a covered-span batch

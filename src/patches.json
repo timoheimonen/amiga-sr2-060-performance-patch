@@ -16,11 +16,11 @@
       "hunk_record_size_file_offset": "0x9f60",
       "payload_file_offset": "0xa554",
       "original_size": "0x5f0",
-      "patched_size": "0x6c8",
-      "payload_size": 216,
+      "patched_size": "0x73c",
+      "payload_size": 332,
       "payload_source": "SR2_RoadSwap.s",
-      "payload_sha256": "c7e1d7d31ee5aeffe54d70b44dc7f6ae34d08969db324e9d9b5617858e962373",
-      "description": "PAL road-scan-safe buffer publication with one complete scan per image"
+      "payload_sha256": "a274af995b3165f90c5307e6b5bc6ce1dc829a55f102434095b4646f3d2e45be",
+      "description": "PAL road-scan-safe publication with a three-field maximum-rate cap (about 16.7 fps)"
     },
     {
       "hunk": 23,
@@ -117,7 +117,7 @@
       "file_offset": "0xa4a6",
       "expected_hex": "4eaefe802e00",
       "replacement_hex": "600000ac4e71",
-      "description": "Publish in PAL raster windows 8-30 or 150-300 after the previous road image has been scanned; retain WaitTOF outside driving display",
+      "description": "Limit driving to about 16.7 fps using three complete PAL fields and beam phase; retain safe raster publication and non-driving WaitTOF",
       "payload_hunk": 10,
       "payload_entry_offset": "0x0",
       "dispatch_opcode_hex": "6000"
@@ -129,9 +129,9 @@
       "hunk_offset": "0xba",
       "file_offset": "0xa01e",
       "expected_hex": "426cbf9c",
-      "replacement_hex": "610005f8",
+      "replacement_hex": "61000662",
       "payload_hunk": 10,
-      "payload_entry_offset": "0xc4",
+      "payload_entry_offset": "0x12e",
       "description": "Clear publication history when initializing a driving display and replay original buffer-index reset"
     },
     {
@@ -197,9 +197,9 @@
   ],
   "road_swap_audit": {
     "hunk": 10,
-    "publish_offset": 1610,
-    "complete_offset": 1618,
-    "state_offset": 1728,
+    "publish_offset": 1634,
+    "complete_offset": 1642,
+    "state_offset": 1836,
     "early_lines": [
       8,
       30
@@ -207,7 +207,13 @@
     "late_lines": [
       150,
       300
-    ]
+    ],
+    "reset_offset": 1822,
+    "resume_branch_offset": 1666,
+    "fallback_branch_offset": 1702,
+    "cap_due_offset": 1792,
+    "minimum_fields": 3,
+    "state_size": 16
   },
-  "release_version": "1.3.0"
+  "release_version": "1.4.0"
 }

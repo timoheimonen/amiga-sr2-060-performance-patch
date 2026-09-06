@@ -1,13 +1,18 @@
 # Changelog
 
 Changes to the standalone Street Rod 2 Kickstart 3.1 / PAL AGA / MC68060 patcher.
-Release 1.3.0 improves the road-buffer timing of version 1.2.0.
+
+## 1.4.0 — 2026-09-06
+
+- Cap driving at approximately 16.7 FPS using three complete PAL fields between road-buffer publications.
+- Wait only for the remaining interval; slower frames receive no extra cap delay and cannot build up catch-up frames.
+- Update the embedded helper, assembly source, manifest, startup banner and reproducible output hashes.
 
 ## 1.3.0 — 2026-09-06
 
 - Reduce road-buffer swap waiting with safe PAL raster timing and buffer-reuse protection.
 - Achieve **14% higher FPS** (12.48 → 14.23) in the stationary Mulholland
-  [FS-UAE benchmark](README.md#performance). Moving gameplay and hardware remain unverified.
+  [FS-UAE benchmark](README.md#performance).
 - Update the patcher, assembler source, startup banner and reproducible output hashes.
 
 ## 1.2.0
@@ -26,4 +31,4 @@ Release 1.3.0 improves the road-buffer timing of version 1.2.0.
 
 The previous target used a KS1.3/OCS startup gate and CIAA DDRA change. It was
 replaced by the KS3.1/AGA/MC68060 release; those earlier changes are not included
-in 1.2.0 or 1.3.0.
+in releases 1.2.0–1.4.0.
