@@ -34,7 +34,6 @@ Stationary Mulholland benchmark in FS-UAE 3.2.35, PAL/AGA/68060:
 | FPS | 12.48 | 14.23 |
 
 **14% higher FPS** in this scene from reduced buffer-swap waiting.
-Moving gameplay and hardware performance remain unverified.
 
 [Changelog](CHANGELOG.md) · [Checksums](FS-UAE.md#checksums) · [Patch source](src)
 
