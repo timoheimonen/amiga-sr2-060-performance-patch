@@ -157,6 +157,26 @@
       "description": "Clear publication history when initializing a driving display and replay original buffer-index reset"
     },
     {
+      "id": "ending_records_full_pointer",
+      "ghidra_raw_address": "0xadb0",
+      "hunk": 12,
+      "hunk_offset": "0x50",
+      "file_offset": "0xb750",
+      "expected_hex": "48c02940fba0",
+      "replacement_hex": "2940fba04a80",
+      "description": "Store the complete allocator pointer, then test D0 as a long"
+    },
+    {
+      "id": "ending_commands_full_pointer",
+      "ghidra_raw_address": "0xadc4",
+      "hunk": 12,
+      "hunk_offset": "0x64",
+      "file_offset": "0xb764",
+      "expected_hex": "48c02940fba4",
+      "replacement_hex": "2940fba44a80",
+      "description": "Store the complete allocator pointer, then test D0 as a long"
+    },
+    {
       "id": "instruction_cache_entry",
       "ghidra_raw_address": "0x0",
       "hunk": 0,
@@ -238,7 +258,7 @@
     "state_size": 20,
     "minimum_fields_offset": 1848
   },
-  "release_version": "1.6.0",
+  "release_version": "1.7.0",
   "startup_menu_audit": {
     "hunk": 10,
     "entry_offset": 1920,
