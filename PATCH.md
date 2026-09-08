@@ -1,8 +1,8 @@
-# Street Rod 2 1.6.0 — assembly patch details
+# Street Rod 2 1.7.0 — assembly patch details
 
 These five 68k assembly helpers implement the audio-timer fix, road-buffer
 timing and frame cap, covered-span drawing optimization and MC68060
-instruction-cache management in release 1.6.0. The startup menu is included
+instruction-cache management in release 1.7.0. The startup menu is included
 in the instruction-cache and road-buffer payloads. They target PAL A1200/AGA
 with Kickstart 3.1 A1200 rev 40.68 and an MC68060.
 
@@ -218,3 +218,19 @@ active-low.
 The four-byte replacement is `0040 0080` → `0240 007f`, at original
 executable file offset `0x11746` (HUNK 24, offset `0x4e2`). It does not
 change executable size or the assembly helper payloads.
+
+## End-scene data loading
+
+Release 1.7.0 preserves the full 32-bit addresses returned by the allocator
+for the 504-byte record table and 732-byte animation command stream.
+In HUNK 12, offsets `$50` and `$64`, the original `EXT.L D0` truncated each
+address to a signed 16-bit value before the store.
+
+Each six-byte replacement stores D0 with `MOVE.L D0,d16(A4)` followed by
+`TST.L D0`. The destinations are `-$460(A4)` and `-$45c(A4)`. Registers and
+the stack are preserved; N/Z reflect the full address, V/C are cleared,
+and X is preserved. HUNK sizes and relocations remain unchanged.
+
+[src/SR2_EndPointers.s](src/SR2_EndPointers.s) contains both replacement
+blocks, embedded in `PROGRAM_PATCHES` at original executable offsets
+`0xb750` and `0xb764`.

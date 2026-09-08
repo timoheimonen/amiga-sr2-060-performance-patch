@@ -21,7 +21,7 @@ import sys
 import tempfile
 
 
-VERSION = "1.6.0"
+VERSION = "1.7.0"
 
 BLOCK_SIZE = 512
 BLOCK_LONGS = BLOCK_SIZE // 4
@@ -44,13 +44,13 @@ SOURCE_ADF_SHA256 = (
     "4444796c1c9337baf16dffa982f1e66dc579a04d3e80a8ffa6a483b648e7bb1c"
 )
 PATCHED_ADF_SHA256 = (
-    "b96bec56cbced4f6e620f107a7f5e08878fa831f1c94da2d509f47473b0d49de"
+    "8b060589f745c3eb86fa326e09cd7a095c245eeadf28326be44da90afb8eed60"
 )
 SOURCE_PROGRAM_SHA256 = (
     "a345fb91144d1ee577dcd5c80a8a8aa3b0a4e777ed9b5b4308d3a2b36d8df3a8"
 )
 PATCHED_PROGRAM_SHA256 = (
-    "29669144cefc0753d4798c3f60f812e2cbc2e6326f82f4f12a9f2dec740a3415"
+    "6b74a2ece30fabf22c54ea6c7ff461cd01ffe0f28d73342dccbb1d9cbd518644"
 )
 TRAINER_SHA256 = (
     "648dbe599570549aea8dd7793d4d405db7f81eb96793e45e52dc22bc575f8e92"
@@ -64,7 +64,7 @@ RELEASE_TIMESTAMP = (17782, 0, 0)
 STARTUP_SEQUENCE = b""";c:SetPatch >NIL: r ;patch system functions
 img.cru
 Echo ""
-Echo "KS3.1/AGA/060 patch 1.6.0 by Timo Heimonen"
+Echo "KS3.1/AGA/060 patch 1.7.0 by Timo Heimonen"
 Echo "(timo.heimonen@proton.me) - 08.09.2026"
 Stack 6000
 SetMap usa1
@@ -75,7 +75,7 @@ LOADWB
 endcli > nil:
 """
 
-# Embedded 1.6.0 helpers; no assembler or external packages required.
+# Embedded 1.7.0 helpers; no assembler or external packages required.
 PAYLOAD_10 = bytes.fromhex(
     "2f0247fa01344a6cbf766700009c4a536710202cdf4a90ab0008b0ab"
     "00106d00007c203900dff004e088024001ff0c40012c620000686100"
@@ -155,6 +155,10 @@ PROGRAM_PATCHES = (
     (0xa4a6, bytes.fromhex("4eaefe802e00"), bytes.fromhex("600000ac4e71")),
     # Clear publication history when initializing a driving display and replay original buffer-index reset
     (0xa01e, bytes.fromhex("426cbf9c"), bytes.fromhex("6100065e")),
+    # Store the complete allocator pointer, then test D0 as a long
+    (0xb750, bytes.fromhex("48c02940fba0"), bytes.fromhex("2940fba04a80")),
+    # Store the complete allocator pointer, then test D0 as a long
+    (0xb764, bytes.fromhex("48c02940fba4"), bytes.fromhex("2940fba44a80")),
     # Enable the MC68060 instruction cache after LoadSeg through exec.Supervisor
     (0x148, bytes.fromhex("48e77efe"), bytes.fromhex("6000334a")),
     # Restore the incoming CACR before returning to Kickstart 3.1

@@ -1,9 +1,9 @@
 # Street Rod 2 — KS3.1 / AGA / 68060 patcher
 
-**Version 1.6.0** adds a startup menu with driving limits of approximately
-**16.7, 12.5, 10 or 8.3 FPS**. Includes joystick input fixes, drawing
-optimizations, instruction-cache support, and audio, display and
-manual-protection compatibility fixes.
+**Version 1.7.0** fixes end-scene data loading. Includes a startup menu
+with driving limits of approximately **16.7, 12.5, 10 or 8.3 FPS**, joystick
+input fixes, drawing optimizations, instruction-cache support, and audio,
+display and manual-protection compatibility fixes.
 
 ## Requirements
 

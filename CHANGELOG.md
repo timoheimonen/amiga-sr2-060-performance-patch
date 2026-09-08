@@ -2,6 +2,10 @@
 
 Changes to the standalone Street Rod 2 Kickstart 3.1 / PAL AGA / MC68060 patcher.
 
+## 1.7.0 — 2026-09-08
+
+- Fix end-scene data loading by preserving both 32-bit buffer addresses.
+
 ## 1.6.0 — 2026-09-08
 
 - Add a startup FPS menu: approximately 16.7, 12.5, 10 or 8.3 FPS; Enter selects 16.7 FPS.
