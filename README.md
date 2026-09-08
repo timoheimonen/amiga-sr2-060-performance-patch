@@ -1,13 +1,12 @@
 # Street Rod 2 — KS3.1 / AGA / 68060 patcher
 
-**Version 1.7.0** fixes end-scene data loading. Includes a startup menu
-with driving limits of approximately **16.7, 12.5, 10 or 8.3 FPS**, joystick
-input fixes, drawing optimizations, instruction-cache support, and audio,
-display and manual-protection compatibility fixes.
+**Version 1.7.1** adds a Camaro opening picture and automatic executable
+compression using Python's built-in zlib. Includes the startup FPS menu
+and the KS3.1/AGA/68060 compatibility and performance fixes.
 
 ## Requirements
 
-- Python 3.10+; no extra packages or assembler required.
+- Python 3.10+; no extra packages, compressor or assembler required.
 - PAL A1200/AGA, MC68060, 2 MiB Chip RAM, 8 MiB Fast RAM and Kickstart 3.1
   A1200 rev 40.68.
 - Original Disk 1 and Disk 2 from [Street Rod Online](https://www.streetrodonline.com/downloads/)
@@ -24,7 +23,9 @@ Use `--output /path/to/output.adf` to choose a location and `--force` to replace
 an existing output. The original disk is never overwritten.
 
 Boot the patched Disk 1 with the **original Disk 2** using the
-[FS-UAE settings](FS-UAE.md). In the startup menu, press **1–4** to select
+[FS-UAE settings](FS-UAE.md). Press and release **Space or a mouse button**
+to close the Camaro picture and continue to the original cracktro.
+In the startup menu, press **1–4** to select
 a limit, or **Enter** for the 16.7 FPS default. The selection lasts until
 restart. Intros, menus and the original save are preserved.
 

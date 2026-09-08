@@ -258,7 +258,7 @@
     "state_size": 20,
     "minimum_fields_offset": 1848
   },
-  "release_version": "1.7.0",
+  "release_version": "1.7.1",
   "startup_menu_audit": {
     "hunk": 10,
     "entry_offset": 1920,
@@ -272,5 +272,36 @@
       5,
       6
     ]
-  }
+  },
+  "compression": {
+    "module": "Python standard-library zlib",
+    "level": 9,
+    "wbits": -15,
+    "packer_source": "zlib_hunk.py",
+    "loader_source": "SR2_ZlibLoader.s",
+    "loader_sha256": "e8da43c0a12a7fdd6f5c2af2e09ab719c55538a1b75c73ba901c5f1f346587b1",
+    "unpacked_program_bytes": 271404,
+    "unpacked_program_sha256": "6b74a2ece30fabf22c54ea6c7ff461cd01ffe0f28d73342dccbb1d9cbd518644",
+    "packed_program_bytes": 149316,
+    "packed_program_sha256": "f1144853f7dc3d61fa3b9cba46212c76a7dd60482ec04470469a96699df2c1d8"
+  },
+  "splash": {
+    "source_image_sha256": "7c406a0049279bb5ce9bd92c48ea49120a5d4f1139316597cb2949174b8034a6",
+    "display": {
+      "width": 640,
+      "height": 512,
+      "colours": 16,
+      "mode": "PAL HIRESLACE"
+    },
+    "unpacked_splash_bytes": 165516,
+    "packed_splash_bytes": 106620,
+    "packed_splash_sha256": "19c9b1de9e9f5fb2add8c8600d0977322c34c94c218f81c632f088bc74db0a8a",
+    "original_cracktro_preserved": true,
+    "source": "SR2_Cracktro.s",
+    "binary_assets": {
+      "cracktro-colors.bin": "b58493e93b0307ffb3b9b5bc9eb5b3e7862a96c432016ee3c88abd0ee6821ed3",
+      "cracktro-planar.bin": "87c61db0a63c1503bf429c08454093a6ec009dcd0f197154f786cfcac80cf43b"
+    }
+  },
+  "patched_adf_sha256": "a74ad58f486f89195f0c2aa9399c36c0a8b00bf3bee348f767acc20fcd53b07c"
 }

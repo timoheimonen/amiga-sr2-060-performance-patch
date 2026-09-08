@@ -2,6 +2,11 @@
 
 Changes to the standalone Street Rod 2 Kickstart 3.1 / PAL AGA / MC68060 patcher.
 
+## 1.7.1 — 2026-09-08
+
+- Add a Camaro picture before the original cracktro; Space or a mouse button closes it.
+- Compress the game automatically using Python’s built-in zlib, leaving 16.5 KiB free on Disk 1. No extra installation is needed.
+
 ## 1.7.0 — 2026-09-08
 
 - Fix end-scene data loading by preserving both 32-bit buffer addresses.
