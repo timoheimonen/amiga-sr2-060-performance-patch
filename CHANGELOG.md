@@ -2,6 +2,12 @@
 
 Changes to the standalone Street Rod 2 Kickstart 3.1 / PAL AGA / MC68060 patcher.
 
+## 1.6.0 — 2026-09-08
+
+- Add a startup FPS menu: approximately 16.7, 12.5, 10 or 8.3 FPS; Enter selects 16.7 FPS.
+- Keep the selected limit across driving-view changes, using the existing safe raster timing.
+- Support `Street_Rod FPS=1` through `FPS=4` to select the limit directly.
+
 ## 1.5.0 — 2026-09-08
 
 - Fix joystick fire-button input by clearing CIAA DDRA bit 7 while preserving the other port directions.

@@ -1,8 +1,9 @@
-# Street Rod 2 1.5.0 — assembly patch details
+# Street Rod 2 1.6.0 — assembly patch details
 
 These five 68k assembly helpers implement the audio-timer fix, road-buffer
 timing and frame cap, covered-span drawing optimization and MC68060
-instruction-cache management in release 1.5.0. They target PAL A1200/AGA
+instruction-cache management in release 1.6.0. The startup menu is included
+in the instruction-cache and road-buffer payloads. They target PAL A1200/AGA
 with Kickstart 3.1 A1200 rev 40.68 and an MC68060.
 
 The helpers are appended to the original executable's HUNK code segments.
@@ -46,8 +47,9 @@ tick's processing finishes.
 
 Source: [src/SR2_RoadSwap.s](src/SR2_RoadSwap.s), appended to HUNK 10.
 
-Release 1.4.0 adds a driving cap of approximately **16.7 FPS** to the
-buffer-timing change introduced in 1.3.0. The PAL Copper list
+Release 1.6.0 provides selectable driving caps of approximately
+**16.7, 12.5, 10 and 8.3 FPS**, extending the cap introduced in 1.4.0
+and the buffer-timing change introduced in 1.3.0. The PAL Copper list
 loads the road bitplane pointers at line 42, displays the road on lines
 44–143, and switches to independent cockpit bitplanes at line 144. The
 helper uses this split to let drawing into the old road buffer start while
@@ -70,8 +72,8 @@ its road scan: in the late window of its first display field, or in a
 later field. Signed modular subtraction handles counter wraparound.
 
 The cap separately tracks `last_publish_field` and `last_publish_beam`.
-`cap_due` requires at least three complete PAL fields since the previous
-publication: at a field difference of exactly three, the beam must also
+`cap_due` requires the selected 3–6 complete PAL fields since the previous
+publication: at exactly that field difference, the beam must also
 have reached the saved position. The longword read from `$dff004`, masked
 with `$1ffff`, includes both vertical and horizontal beam position. The
 VBlank counter is sampled around the beam read; a changed counter rejects
@@ -103,7 +105,8 @@ Outside the driving display, the helper invalidates its publication and
 cap history and uses the original `WaitTOF()` and pointer-copy path.
 `reset_swap` also invalidates the history when a driving display is
 initialized and replays the original buffer-index reset, so the first frame
-has no previous cap deadline. These raster windows depend on the target
+has no previous cap deadline. The selected `minimum_fields` value is kept
+separate from that history and survives both paths. These raster windows depend on the target
 PAL Copper layout.
 
 ## SR2_CoveredSpanEntry.s — mark a covered-span batch
@@ -176,6 +179,33 @@ register restore and returns with `RTS`.
 Only the instruction-cache enable bit is added during setup. The helper
 leaves the incoming data-cache configuration unchanged and restores the
 incoming cache-control value on normal exit.
+
+## Startup FPS selection
+
+[src/SR2_Startup.i](src/SR2_Startup.i) is included in the HUNK 0 payload.
+A `BSR.W` at original entry offset `$4` calls this dispatcher after cache
+setup. It preserves all working registers and follows ten `LoadSeg` BPTR
+links to HUNK 10, so the segments need not be contiguous. On return, it
+replays the original argument setup and continues at entry offset `$8`.
+
+[src/SR2_StartupMenu.i](src/SR2_StartupMenu.i) is included in HUNK 10 at
+offset `$780`. It opens the current `CONSOLE:` through `dos.library` and
+uses raw input to accept one key. Keys 1–4 select 3, 4, 5 or 6 PAL fields;
+Enter selects 3. Other keys are ignored, including the numeric parts of
+cursor and function-key escape sequences. The console returns to cooked
+mode before the file handle and library are closed.
+
+The menu stores the choice in `minimum_fields`. Both scheduler comparisons
+read this value. A valid `FPS=1` through `FPS=4` command-line argument sets
+the same value without opening the menu. Missing console support uses the
+default. No settings file or separate launcher is needed.
+
+To assemble the sources with `vasmm68k_mot`, add `-Isrc` to the command so
+that the two include files can be resolved, for example:
+
+```sh
+vasmm68k_mot -m68060 -Fbin -nosym -Isrc -o /tmp/SR2_RoadSwap.bin src/SR2_RoadSwap.s
+```
 
 ## Joystick fire-button input
 

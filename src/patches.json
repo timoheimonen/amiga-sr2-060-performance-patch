@@ -16,11 +16,11 @@
       "hunk_record_size_file_offset": "0x9f60",
       "payload_file_offset": "0xa554",
       "original_size": "0x5f0",
-      "patched_size": "0x73c",
-      "payload_size": 332,
+      "patched_size": "0x984",
+      "payload_size": 916,
       "payload_source": "SR2_RoadSwap.s",
-      "payload_sha256": "a274af995b3165f90c5307e6b5bc6ce1dc829a55f102434095b4646f3d2e45be",
-      "description": "PAL road-scan-safe publication with a three-field maximum-rate cap (about 16.7 fps)"
+      "payload_sha256": "231d320a91f6070b7e8762355e1390eec4f7681558725116d09bbcc8a5f03173",
+      "description": "PAL road-scan-safe publication with a startup-selectable 3/4/5/6-field cap"
     },
     {
       "hunk": 23,
@@ -42,11 +42,11 @@
       "hunk_record_size_file_offset": "0x144",
       "payload_file_offset": "0x3494",
       "original_size": "0x334c",
-      "patched_size": "0x33a8",
-      "payload_size": 92,
+      "patched_size": "0x33dc",
+      "payload_size": 144,
       "payload_source": "SR2_InstructionCache.s",
-      "payload_sha256": "5bcac60a4916f3fe7293c43604c1c34d41a6d6e43b34d124e5f69de6c81db04e",
-      "description": "Supervisor-wrapped MC68060 instruction-cache lifecycle appended to the entry HUNK"
+      "payload_sha256": "26b76750ebca9eda166085874d511937eb1423e4f17d640ca37035e3c2baf464",
+      "description": "MC68060 instruction-cache lifecycle and common FPS startup dispatcher"
     },
     {
       "hunk": 42,
@@ -76,6 +76,18 @@
     }
   ],
   "patches": [
+    {
+      "id": "startup_fps_menu",
+      "ghidra_raw_address": "0x4",
+      "hunk": 0,
+      "hunk_offset": "0x4",
+      "file_offset": "0x14c",
+      "expected_hex": "24482400",
+      "replacement_hex": "610033a6",
+      "payload_hunk": 0,
+      "payload_entry_offset": "0x60",
+      "description": "Select the driving FPS limit in the current console before original runtime initialization; replay argument setup"
+    },
     {
       "id": "joystick_fire_ciaa_ddra_input",
       "ghidra_raw_address": "0x1322e",
@@ -127,7 +139,7 @@
       "file_offset": "0xa4a6",
       "expected_hex": "4eaefe802e00",
       "replacement_hex": "600000ac4e71",
-      "description": "Limit driving to about 16.7 fps using three complete PAL fields and beam phase; retain safe raster publication and non-driving WaitTOF",
+      "description": "Apply the selected 3/4/5/6 complete PAL-field minimum interval with beam phase and safe raster publication",
       "payload_hunk": 10,
       "payload_entry_offset": "0x0",
       "dispatch_opcode_hex": "6000"
@@ -139,9 +151,9 @@
       "hunk_offset": "0xba",
       "file_offset": "0xa01e",
       "expected_hex": "426cbf9c",
-      "replacement_hex": "61000662",
+      "replacement_hex": "6100065e",
       "payload_hunk": 10,
-      "payload_entry_offset": "0x12e",
+      "payload_entry_offset": "0x12a",
       "description": "Clear publication history when initializing a driving display and replay original buffer-index reset"
     },
     {
@@ -207,9 +219,9 @@
   ],
   "road_swap_audit": {
     "hunk": 10,
-    "publish_offset": 1634,
-    "complete_offset": 1642,
-    "state_offset": 1836,
+    "publish_offset": 1632,
+    "complete_offset": 1640,
+    "state_offset": 1832,
     "early_lines": [
       8,
       30
@@ -218,12 +230,27 @@
       150,
       300
     ],
-    "reset_offset": 1822,
-    "resume_branch_offset": 1666,
-    "fallback_branch_offset": 1702,
-    "cap_due_offset": 1792,
+    "reset_offset": 1818,
+    "resume_branch_offset": 1664,
+    "fallback_branch_offset": 1700,
+    "cap_due_offset": 1790,
     "minimum_fields": 3,
-    "state_size": 16
+    "state_size": 20,
+    "minimum_fields_offset": 1848
   },
-  "release_version": "1.5.0"
+  "release_version": "1.6.0",
+  "startup_menu_audit": {
+    "hunk": 10,
+    "entry_offset": 1920,
+    "key_offset": 2210,
+    "key_buffer_offset": 2434,
+    "dispatcher_hunk": 0,
+    "dispatcher_offset": 13228,
+    "minimum_fields_choices": [
+      3,
+      4,
+      5,
+      6
+    ]
+  }
 }

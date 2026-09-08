@@ -21,7 +21,7 @@ import sys
 import tempfile
 
 
-VERSION = "1.5.0"
+VERSION = "1.6.0"
 
 BLOCK_SIZE = 512
 BLOCK_LONGS = BLOCK_SIZE // 4
@@ -44,13 +44,13 @@ SOURCE_ADF_SHA256 = (
     "4444796c1c9337baf16dffa982f1e66dc579a04d3e80a8ffa6a483b648e7bb1c"
 )
 PATCHED_ADF_SHA256 = (
-    "7360096c9845b71470dad2be50c5ee351e48b2b96c00aaf6dc97ebd70057a02c"
+    "b96bec56cbced4f6e620f107a7f5e08878fa831f1c94da2d509f47473b0d49de"
 )
 SOURCE_PROGRAM_SHA256 = (
     "a345fb91144d1ee577dcd5c80a8a8aa3b0a4e777ed9b5b4308d3a2b36d8df3a8"
 )
 PATCHED_PROGRAM_SHA256 = (
-    "cc3ee220a243aa887e8f8376c61231d8d85649834c5129da4e53b276f1fdc626"
+    "29669144cefc0753d4798c3f60f812e2cbc2e6326f82f4f12a9f2dec740a3415"
 )
 TRAINER_SHA256 = (
     "648dbe599570549aea8dd7793d4d405db7f81eb96793e45e52dc22bc575f8e92"
@@ -64,7 +64,7 @@ RELEASE_TIMESTAMP = (17782, 0, 0)
 STARTUP_SEQUENCE = b""";c:SetPatch >NIL: r ;patch system functions
 img.cru
 Echo ""
-Echo "KS3.1/AGA/060 patch 1.5.0 by Timo Heimonen"
+Echo "KS3.1/AGA/060 patch 1.6.0 by Timo Heimonen"
 Echo "(timo.heimonen@proton.me) - 08.09.2026"
 Stack 6000
 SetMap usa1
@@ -75,20 +75,41 @@ LOADWB
 endcli > nil:
 """
 
-# Embedded 1.5.0 helpers; no assembler or external packages required.
+# Embedded 1.6.0 helpers; no assembler or external packages required.
 PAYLOAD_10 = bytes.fromhex(
-    "2f0247fa01384a6cbf766700009e4a536712202cdf4a90ab00080c80"
-    "000000036d00007c203900dff004e088024001ff0c40012c62000068"
-    "610000804a406700ffce2c7800044eaeff886100006e4a4067442741"
-    "0008d2872741000436bc0001302cbf9cc1fc003041ecbf9ed1c0226c"
-    "fb9c700b22d851c8fffc203900dff00402800001ffff52802740000c"
-    "4eaeff82241f6000fef44eaeff826000ff722c6c9c584eaefef26000"
-    "ff6642532c6c9c584eaefef2241f6000feac222cdf4a243900dff004"
-    "02820001ffffb2acdf4a663c2002e088024001ff0c400008652e7e00"
-    "0c40001e630e0c40009665200c40012c621a7e014a536710200190ab"
-    "00046b0c66044a476706600870014e7570004e75200190ab00080c80"
-    "000000036d0c6e06b4ab000c650470014e7570004e7541fa000c4250"
-    "426cbf9c4e754e7100000000000000000000000000000000"
+    "2f0247fa01344a6cbf766700009c4a536710202cdf4a90ab0008b0ab"
+    "00106d00007c203900dff004e088024001ff0c40012c620000686100"
+    "00804a406700ffd02c7800044eaeff886100006e4a40674427410008"
+    "d2872741000436bc0001302cbf9cc1fc003041ecbf9ed1c0226cfb9c"
+    "700b22d851c8fffc203900dff00402800001ffff52802740000c4eae"
+    "ff82241f6000fef64eaeff826000ff742c6c9c584eaefef26000ff68"
+    "42532c6c9c584eaefef2241f6000feae222cdf4a243900dff0040282"
+    "0001ffffb2acdf4a663c2002e088024001ff0c400008652e7e000c40"
+    "001e630e0c40009665200c40012c621a7e014a536710200190ab0004"
+    "6b0c66044a476706600870014e7570004e75200190ab0008b0ab0010"
+    "6d0c6e06b4ab000c650470014e7570004e7541fa000c4250426cbf9c"
+    "4e754e71000000000000000000000000000000000000000300000000"
+    "00000000000000000000000000000000000000000000000000000000"
+    "00000000000000000000000000000000000000000000000000000000"
+    "00000000000000000c800000000666260c904650533d661e0c28000a"
+    "00056616700010280004610001024a80670841faff9020804e757e03"
+    "2c78000443fa011a70244eaefdd84a80670000de2c4041fa01142208"
+    "243c000003ed4eaeffe22c00670000bc220674014eaefe564a806700"
+    "00a8220641fa00f72408263c000000854eaeffd07a00220641fa0180"
+    "240876014eaeffd60c800000000166487000103a016a4a0567200c05"
+    "0001660a0c00005b66107a0260d00c00004065ca0c00007e62c47a00"
+    "60c00c00001b66047a0160b60c00009b66047a0260ac6100004e4a80"
+    "67a42e0041fafeda208720075780c0fc000541fa00fed1c022062408"
+    "76054eaeffd0220641fa0100240876044eaeffd0220674004eaefe56"
+    "22064eaeffdc224e2c7800044eaefe624e750c00000d67200c00000a"
+    "671a0c00003165180c00003462120280000000ff04800000002e4e75"
+    "70034e7570004e75646f732e6c69627261727900434f4e534f4c453a"
+    "000a53656c6563742064726976696e6720465053206c696d69743a0a"
+    "0a20203120202031362e372046505320202864656661756c74290a20"
+    "203220202031322e35204650530a20203320202031302e3020465053"
+    "0a20203420202020382e33204650530a0a507265737320312d342c20"
+    "6f7220454e54455220666f722064656661756c743a2031362e372031"
+    "322e352031302e3020382e3320204650530a0000"
 )
 
 PAYLOAD_23 = bytes.fromhex(
@@ -99,10 +120,12 @@ PAYLOAD_23 = bytes.fromhex(
 )
 
 PAYLOAD_0 = bytes.fromhex(
-    "48e77efe48e7fffe2c7800044bfa00244eaeffe24cdf7fff6000cc9e2f00"
-    "2c7800044bfa00264eaeffe2201f4cdf7f7e4e7541fa00244e7a10022081"
-    "f4980081000080004e7b10024e7341fa000c2210f4984e7b10024e730000"
-    "0000"
+    "48e77efe48e7fffe2c7800044bfa00244eaeffe24cdf7fff6000cc9e"
+    "2f002c7800044bfa00264eaeffe2201f4cdf7f7e4e7541fa00244e7a"
+    "10022081f4980081000080004e7b10024e7341fa000c2210f4984e7b"
+    "10024e73000000000000000048e7fffe41fafffa41e8cc5070092210"
+    "e589204151c8fff845e807842017206f00204e924cdf7fff24482400"
+    "4e754e71"
 )
 
 PAYLOAD_42 = bytes.fromhex(
@@ -118,7 +141,9 @@ PAYLOAD_45 = bytes.fromhex(
 
 PROGRAM_PATCHES = (
     # Original file offset, expected bytes, replacement bytes.
-    # Configure joystick fire as an input, preserving other CIAA directions.
+    # Select the driving FPS limit in the current console before original runtime initialization; replay argument setup
+    (0x14c, bytes.fromhex("24482400"), bytes.fromhex("610033a6")),
+    # Clear CIAA DDRA bit 7 before reading joystick fire; preserve all other port directions
     (0x11746, bytes.fromhex("00400080"), bytes.fromhex("0240007f")),
     # Keep LINK and the original stack guard, then return D0=1 success from the manual check, as in the user-supplied patch
     (0x35bf8, bytes.fromhex("48e72300554f"), bytes.fromhex("70014e5d4e75")),
@@ -126,10 +151,10 @@ PROGRAM_PATCHES = (
     (0x10fac, bytes.fromhex("4e55fff4"), bytes.fromhex("6000025a")),
     # Select the first active BPLCON0 in the KS3.1 AGA Copper list for four-plane road; retain six-plane cockpit at the split
     (0xa3a4, bytes.fromhex("6706"), bytes.fromhex("671a")),
-    # Limit driving to about 16.7 fps using three complete PAL fields and beam phase; retain safe raster publication and non-driving WaitTOF
+    # Apply the selected 3/4/5/6 complete PAL-field minimum interval with beam phase and safe raster publication
     (0xa4a6, bytes.fromhex("4eaefe802e00"), bytes.fromhex("600000ac4e71")),
     # Clear publication history when initializing a driving display and replay original buffer-index reset
-    (0xa01e, bytes.fromhex("426cbf9c"), bytes.fromhex("61000662")),
+    (0xa01e, bytes.fromhex("426cbf9c"), bytes.fromhex("6100065e")),
     # Enable the MC68060 instruction cache after LoadSeg through exec.Supervisor
     (0x148, bytes.fromhex("48e77efe"), bytes.fromhex("6000334a")),
     # Restore the incoming CACR before returning to Kickstart 3.1
@@ -143,12 +168,12 @@ PROGRAM_PATCHES = (
 )
 
 HUNK_SIZE_PATCHES = (
-    (0x3c, 0x17c, 0x1cf),
-    (0x9f60, 0x17c, 0x1cf),
+    (0x3c, 0x17c, 0x261),
+    (0x9f60, 0x17c, 0x261),
     (0x70, 0x6c4, 0x6df),
     (0xf6f4, 0x6c4, 0x6df),
-    (0x14, 0xcd3, 0xcea),
-    (0x144, 0xcd3, 0xcea),
+    (0x14, 0xcd3, 0xcf7),
+    (0x144, 0xcd3, 0xcf7),
     (0xbc, 0x1711, 0x1716),
     (0x1b3cc, 0x1711, 0x1716),
     (0xc8, 0xd8c, 0xda5),
@@ -254,7 +279,7 @@ def patch_program(source: bytes) -> bytes:
     for offset, payload in HUNK_PAYLOADS:
         result[offset:offset] = payload
 
-    if len(result) != 270768 or sha256(result) != PATCHED_PROGRAM_SHA256:
+    if len(result) != 271404 or sha256(result) != PATCHED_PROGRAM_SHA256:
         raise PatchError("internal STREET_ROD result verification failed")
     return bytes(result)
 
