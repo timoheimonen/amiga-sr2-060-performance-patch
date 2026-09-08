@@ -2,6 +2,10 @@
 
 Changes to the standalone Street Rod 2 Kickstart 3.1 / PAL AGA / MC68060 patcher.
 
+## 1.5.0 — 2026-09-08
+
+- Fix joystick fire-button input by clearing CIAA DDRA bit 7 while preserving the other port directions.
+
 ## 1.4.0 — 2026-09-06
 
 - Cap driving at approximately 16.7 FPS using three complete PAL fields between road-buffer publications.

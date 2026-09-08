@@ -1,4 +1,4 @@
-# FS-UAE setup for version 1.4.0
+# FS-UAE setup for version 1.5.0
 
 Use FS-UAE 3.2.35 with PAL A1200/AGA and an MC68060. This image is not for
 stock 68020, KS1.3 or OCS configurations.
@@ -36,7 +36,7 @@ All ADFs are 901,120 bytes. The Kickstart ROM is 512 KiB.
 | --- | --- |
 | Original Disk 1 | `4444796c1c9337baf16dffa982f1e66dc579a04d3e80a8ffa6a483b648e7bb1c` |
 | Original Disk 2 | `32e15a76642f81d9b923fef5c94e35b55d78b193b8bdd7640a7cba276d83f0ec` |
-| Patched Disk 1 (1.4.0) | `6dda31396f559358d493cae80b20b00d34333d7509932399a3dafd178e2ec837` |
+| Patched Disk 1 (1.5.0) | `7360096c9845b71470dad2be50c5ee351e48b2b96c00aaf6dc97ebd70057a02c` |
 | Kickstart 3.1 A1200 rev 40.68 | `6d43840d4099a74170ea0f0425b6257c3891ebcaa39c4d1840075a9ab22b5707` |
 
 The patcher verifies Disk 1, original instructions, HUNK sizes, the resulting

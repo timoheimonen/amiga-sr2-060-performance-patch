@@ -21,7 +21,7 @@ import sys
 import tempfile
 
 
-VERSION = "1.4.0"
+VERSION = "1.5.0"
 
 BLOCK_SIZE = 512
 BLOCK_LONGS = BLOCK_SIZE // 4
@@ -44,28 +44,28 @@ SOURCE_ADF_SHA256 = (
     "4444796c1c9337baf16dffa982f1e66dc579a04d3e80a8ffa6a483b648e7bb1c"
 )
 PATCHED_ADF_SHA256 = (
-    "6dda31396f559358d493cae80b20b00d34333d7509932399a3dafd178e2ec837"
+    "7360096c9845b71470dad2be50c5ee351e48b2b96c00aaf6dc97ebd70057a02c"
 )
 SOURCE_PROGRAM_SHA256 = (
     "a345fb91144d1ee577dcd5c80a8a8aa3b0a4e777ed9b5b4308d3a2b36d8df3a8"
 )
 PATCHED_PROGRAM_SHA256 = (
-    "1f8bcde0eb404bf44e9d1c7041f04f45ff263026b64e532a641c64fa43d0e4dc"
+    "cc3ee220a243aa887e8f8376c61231d8d85649834c5129da4e53b276f1fdc626"
 )
 TRAINER_SHA256 = (
     "648dbe599570549aea8dd7793d4d405db7f81eb96793e45e52dc22bc575f8e92"
 )
 
 # Reproducible AmigaDOS modification time of the reference release:
-# 6 September 2026 00:00:00, represented as days, minutes and 1/50 s ticks
+# 8 September 2026 00:00:00, represented as days, minutes and 1/50 s ticks
 # since the Amiga epoch.  Fixed metadata makes every patched ADF identical.
-RELEASE_TIMESTAMP = (17780, 0, 0)
+RELEASE_TIMESTAMP = (17782, 0, 0)
 
 STARTUP_SEQUENCE = b""";c:SetPatch >NIL: r ;patch system functions
 img.cru
 Echo ""
-Echo "KS3.1/AGA/060 patch 1.4.0 by Timo Heimonen"
-Echo "(timo.heimonen@proton.me) - 06.09.2026"
+Echo "KS3.1/AGA/060 patch 1.5.0 by Timo Heimonen"
+Echo "(timo.heimonen@proton.me) - 08.09.2026"
 Stack 6000
 SetMap usa1
 SetClock >NIL: Opt load
@@ -75,7 +75,7 @@ LOADWB
 endcli > nil:
 """
 
-# Embedded 1.4.0 helpers; no assembler or external packages required.
+# Embedded 1.5.0 helpers; no assembler or external packages required.
 PAYLOAD_10 = bytes.fromhex(
     "2f0247fa01384a6cbf766700009e4a536712202cdf4a90ab00080c80"
     "000000036d00007c203900dff004e088024001ff0c40012c62000068"
@@ -118,6 +118,8 @@ PAYLOAD_45 = bytes.fromhex(
 
 PROGRAM_PATCHES = (
     # Original file offset, expected bytes, replacement bytes.
+    # Configure joystick fire as an input, preserving other CIAA directions.
+    (0x11746, bytes.fromhex("00400080"), bytes.fromhex("0240007f")),
     # Keep LINK and the original stack guard, then return D0=1 success from the manual check, as in the user-supplied patch
     (0x35bf8, bytes.fromhex("48e72300554f"), bytes.fromhex("70014e5d4e75")),
     # Queue original music tick at level 1 so Paula level 4 can interrupt BeginIO

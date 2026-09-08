@@ -1,7 +1,7 @@
 # Street Rod 2 — KS3.1 / AGA / 68060 patcher
 
-**Version 1.4.0** caps driving at approximately **16.7 FPS**. It waits only
-when a frame finishes early; slower frames get no extra cap delay.
+**Version 1.5.0** fixes joystick fire-button input and caps driving
+at approximately **16.7 FPS**. It waits only when a frame finishes early; slower frames get no extra cap delay.
 Includes drawing optimizations, instruction-cache support, and audio,
 display and manual-protection compatibility fixes.
 
