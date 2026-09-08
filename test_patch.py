@@ -1,6 +1,8 @@
 """Standard-library checks; full ADF tests use a locally supplied original."""
 from datetime import datetime, timedelta
 import json
+import runpy
+import shutil
 import os
 from pathlib import Path
 import subprocess
@@ -18,7 +20,7 @@ SOURCE = Path(os.environ.get('SR2_DISK1', ROOT / 'originals/SR2AMIGA_DISK1.adf')
 class PatcherUnitTests(unittest.TestCase):
     def test_embedded_release_matches_source_manifest(self):
         manifest = json.loads((ROOT / 'src/patches.json').read_text())
-        self.assertEqual(manifest['release_version'], '1.7.0')
+        self.assertEqual(manifest['release_version'], '1.7.1')
         self.assertEqual(patch.VERSION, manifest['release_version'])
         self.assertEqual(patch.SOURCE_PROGRAM_SHA256, manifest['source']['sha256'])
 
@@ -54,11 +56,22 @@ class PatcherUnitTests(unittest.TestCase):
         self.assertEqual([offset for offset, _ in patch.HUNK_PAYLOADS],
                          sorted(expected_payload_offsets, reverse=True))
 
+    def test_zlib_sources_and_splash(self):
+        manifest = json.loads((ROOT / 'src/patches.json').read_text())
+        source = runpy.run_path(str(ROOT / 'src/zlib_hunk.py'))
+        self.assertEqual(source['LOADER'], patch.LOADER)
+        self.assertEqual(patch.sha256(patch.LOADER), manifest['compression']['loader_sha256'])
+        self.assertEqual(patch.sha256(patch.SPLASH), manifest['splash']['packed_splash_sha256'])
+        for name, digest in manifest['splash']['binary_assets'].items():
+            self.assertEqual(patch.sha256((ROOT / 'src' / name).read_bytes()), digest)
+        self.assertEqual(manifest['patched_adf_sha256'], patch.PATCHED_ADF_SHA256)
+        self.assertIn(b'Stack 6000\nSR2_SPLASH\nimg.cru\n', patch.STARTUP_SEQUENCE)
+
     def test_cli_version(self):
         result = subprocess.run([sys.executable, '-B', str(ROOT / 'patch.py'), '--version'],
                                 capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(result.stdout.strip(), 'patch.py 1.7.0')
+        self.assertEqual(result.stdout.strip(), 'patch.py 1.7.1')
 
     def test_startup_banner_matches_release(self):
         days, minutes, ticks = patch.RELEASE_TIMESTAMP
@@ -102,13 +115,17 @@ class OriginalImageTests(unittest.TestCase):
         cls.source = SOURCE.read_bytes()
         cls.result = patch.build_patched_adf(cls.source)
 
-    def test_reproducible_1_7_0_release(self):
+    def test_reproducible_1_7_1_release(self):
         self.assertEqual(patch.sha256(self.result),
-                         '8b060589f745c3eb86fa326e09cd7a095c245eeadf28326be44da90afb8eed60')
+                         'a74ad58f486f89195f0c2aa9399c36c0a8b00bf3bee348f767acc20fcd53b07c')
         self.assertEqual(patch.build_patched_adf(self.source), self.result)
         result = patch.OFSImage(self.result)
         program = result.read_file('STREET_ROD').data
-        # Hash of the separately built, accepted KS3.1/AGA 1.7.0 executable.
+        self.assertEqual(patch.sha256(program), patch.PACKED_PROGRAM_SHA256)
+        self.assertEqual(result.read_file('SR2_SPLASH').data, patch.SPLASH)
+        self.assertEqual(sum(result._is_free(n) for n in range(2, patch.ADF_BLOCKS)), 33)
+        program = patch.patch_program(patch.OFSImage(self.source).read_file('STREET_ROD').data)
+        # Unpacked game matches release 1.7.0.
         self.assertEqual(patch.sha256(program),
                          '6b74a2ece30fabf22c54ea6c7ff461cd01ffe0f28d73342dccbb1d9cbd518644')
         self.assertEqual(program[0x11bd6:0x11bda], bytes.fromhex('0240007f'))
@@ -153,6 +170,26 @@ class OriginalImageTests(unittest.TestCase):
                 self.assertEqual(original.read_file(name).data, result.read_file(name).data, name)
                 checked += 1
         self.assertGreater(checked, 10)
+
+    def test_zlib_packer_matches_development_source(self):
+        source_packer = runpy.run_path(str(ROOT / 'src/zlib_hunk.py'))['pack']
+        program = patch.patch_program(patch.OFSImage(self.source).read_file('STREET_ROD').data)
+        self.assertEqual(patch.pack_hunk(program), source_packer(program))
+        with mock_patch.object(patch, 'SPLASH', b'bad'):
+            with self.assertRaisesRegex(patch.PatchError, 'splash verification failed'):
+                patch.build_patched_adf(self.source)
+
+    def test_single_file_without_path_tools(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            shutil.copyfile(ROOT / 'patch.py', folder / 'patch.py')
+            (folder / 'original.adf').write_bytes(self.source)
+            # No src/ directory, shell tools or external compressor available.
+            result = subprocess.run([sys.executable, '-I', '-B', str(folder / 'patch.py'),
+                                     str(folder / 'original.adf'), '-o', str(folder / 'result.adf')],
+                                    env={**os.environ, 'PATH': ''}, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual((folder / 'result.adf').read_bytes(), self.result)
 
     def test_modified_source_rejected(self):
         damaged = bytearray(self.source)
