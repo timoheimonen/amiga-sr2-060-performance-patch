@@ -1,8 +1,8 @@
-# Street Rod 2 1.4.0 — assembly patch details
+# Street Rod 2 1.5.0 — assembly patch details
 
 These five 68k assembly helpers implement the audio-timer fix, road-buffer
 timing and frame cap, covered-span drawing optimization and MC68060
-instruction-cache management in release 1.4.0. They target PAL A1200/AGA
+instruction-cache management in release 1.5.0. They target PAL A1200/AGA
 with Kickstart 3.1 A1200 rev 40.68 and an MC68060.
 
 The helpers are appended to the original executable's HUNK code segments.
@@ -176,3 +176,15 @@ register restore and returns with `RTS`.
 Only the instruction-cache enable bit is added during setup. The helper
 leaves the incoming data-cache configuration unchanged and restores the
 incoming cache-control value on normal exit.
+
+## Joystick fire-button input
+
+Release 1.5.0 changes `ori.w #$80,d0` to `andi.w #$7f,d0` in the
+joystick routine before it writes CIAA DDRA (`$BFE201`). Bit 7 is cleared
+to select input mode for the fire button read from CIAA PRA (`$BFE001`);
+all other direction bits are preserved. The following button test remains
+active-low.
+
+The four-byte replacement is `0040 0080` → `0240 007f`, at original
+executable file offset `0x11746` (HUNK 24, offset `0x4e2`). It does not
+change executable size or the assembly helper payloads.

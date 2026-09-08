@@ -77,6 +77,16 @@
   ],
   "patches": [
     {
+      "id": "joystick_fire_ciaa_ddra_input",
+      "ghidra_raw_address": "0x1322e",
+      "hunk": 24,
+      "hunk_offset": "0x4e2",
+      "file_offset": "0x11746",
+      "expected_hex": "00400080",
+      "replacement_hex": "0240007f",
+      "description": "Clear CIAA DDRA bit 7 before reading joystick fire; preserve all other port directions"
+    },
+    {
       "id": "manual_protection_success_bypass",
       "ghidra_raw_address": "0x39ddc",
       "hunk": 61,
@@ -215,5 +225,5 @@
     "minimum_fields": 3,
     "state_size": 16
   },
-  "release_version": "1.4.0"
+  "release_version": "1.5.0"
 }

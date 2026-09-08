@@ -18,7 +18,7 @@ SOURCE = Path(os.environ.get('SR2_DISK1', ROOT / 'originals/SR2AMIGA_DISK1.adf')
 class PatcherUnitTests(unittest.TestCase):
     def test_embedded_release_matches_source_manifest(self):
         manifest = json.loads((ROOT / 'src/patches.json').read_text())
-        self.assertEqual(manifest['release_version'], '1.4.0')
+        self.assertEqual(manifest['release_version'], '1.5.0')
         self.assertEqual(patch.VERSION, manifest['release_version'])
         self.assertEqual(patch.SOURCE_PROGRAM_SHA256, manifest['source']['sha256'])
 
@@ -58,7 +58,7 @@ class PatcherUnitTests(unittest.TestCase):
         result = subprocess.run([sys.executable, '-B', str(ROOT / 'patch.py'), '--version'],
                                 capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(result.stdout.strip(), 'patch.py 1.4.0')
+        self.assertEqual(result.stdout.strip(), 'patch.py 1.5.0')
 
     def test_startup_banner_matches_release(self):
         days, minutes, ticks = patch.RELEASE_TIMESTAMP
@@ -102,15 +102,17 @@ class OriginalImageTests(unittest.TestCase):
         cls.source = SOURCE.read_bytes()
         cls.result = patch.build_patched_adf(cls.source)
 
-    def test_reproducible_1_4_0_release(self):
+    def test_reproducible_1_5_0_release(self):
         self.assertEqual(patch.sha256(self.result),
-                         '6dda31396f559358d493cae80b20b00d34333d7509932399a3dafd178e2ec837')
+                         '7360096c9845b71470dad2be50c5ee351e48b2b96c00aaf6dc97ebd70057a02c')
         self.assertEqual(patch.build_patched_adf(self.source), self.result)
         result = patch.OFSImage(self.result)
         program = result.read_file('STREET_ROD').data
-        # Hash of the separately built, accepted KS3.1/AGA 1.4.0 executable.
+        # Hash of the separately built, accepted KS3.1/AGA 1.5.0 executable.
         self.assertEqual(patch.sha256(program),
-                         '1f8bcde0eb404bf44e9d1c7041f04f45ff263026b64e532a641c64fa43d0e4dc')
+                         'cc3ee220a243aa887e8f8376c61231d8d85649834c5129da4e53b276f1fdc626')
+        self.assertEqual(program[0x1195a:0x1195e], bytes.fromhex('0240007f'))
+        self.assertNotIn(bytes.fromhex('103900bfe2010040008013c000bfe201'), program)
         self.assertEqual(result.read_file('s/startup-sequence').data, patch.STARTUP_SEQUENCE)
         self.assertNotIn(b'SR2_060Gate', patch.STARTUP_SEQUENCE)
 
