@@ -2,8 +2,8 @@
 ; The verified Copper loads the top pointers at line 42, displays the road
 ; on 44..143, and loads independent cockpit pointers at line 144.
 ; Keep margins on both sides, and publish each image for at least one scan.
-; Release 1.4.0: at least three complete PAL fields between publications
-; (about 16.7 fps). Count both fields and beam phase, not just VBlanks.
+; Release 1.6.0: select 3/4/5/6 complete PAL fields at startup (default 3).
+; Count both fields and beam phase, not just VBlanks.
 ; Appended to HUNK 10. Original WaitBlit and buffer-index toggle precede us;
 ; original descriptor exchange and register restoration follow us.
 HUNK_SIZE       = $5f0
@@ -12,7 +12,6 @@ RESUME_OFFSET   = $578           ; original $9b90
 _LVODisable     = -120
 _LVOEnable      = -126
 _LVOWaitTOF     = -270
-MIN_FIELDS     = 3
         SECTION swap,CODE
 swap_wait
         move.l  d2,-(sp)        ; original swap preserves only D7/A3/A6
@@ -26,7 +25,7 @@ swap_poll
         beq.b   .beam
         move.l  -$20b6(a4),d0
         sub.l   8(a3),d0
-        cmpi.l  #MIN_FIELDS,d0
+        cmp.l   16(a3),d0
         blt.w   swap_sleep
 .beam
         ; At the end of a PAL field, sleep instead of polling across wrap.
@@ -137,7 +136,7 @@ eligible
 cap_due
         move.l  d1,d0
         sub.l   8(a3),d0
-        cmpi.l  #MIN_FIELDS,d0
+        cmp.l   16(a3),d0
         blt.b   .no
         bgt.b   .yes
         cmp.l   12(a3),d2
@@ -163,4 +162,10 @@ last_publish_field
         dc.l    0
 last_publish_beam
         dc.l    0
+minimum_fields
+        dc.l    3              ; configuration survives reset_swap/fallback
+
+        ; Fixed entry shared by every HUNK 0 startup dispatcher.
+        dcb.b   $780-HUNK_SIZE-(*-swap_wait),0
+        INCLUDE "SR2_StartupMenu.i"
         END

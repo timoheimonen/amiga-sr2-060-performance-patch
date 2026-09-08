@@ -14,6 +14,7 @@ ORIGINAL_CONTINUE      = $0004
 
         SECTION cache,CODE
 
+payload_begin
 cache_entry
         movem.l d1-d6/a0-a6,-(a7)       * replay replaced entry instruction
         movem.l d0-d7/a0-a6,-(a7)       * make cache setup fully transparent
@@ -57,4 +58,5 @@ saved_cacr
         dc.l    0
         cnop    0,4
 
+        INCLUDE "SR2_Startup.i"
         END
