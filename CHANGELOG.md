@@ -2,6 +2,11 @@
 
 Changes to the standalone Street Rod 2 Kickstart 3.1 / PAL AGA / MC68060 patcher.
 
+## 1.8.0 — 2026-09-23
+
+- Fill the road polygons with the CPU instead of `AreaEnd()`, producing identical pixels.
+- Reach the 16.7 FPS limit in the heavy Mulholland benchmark scene: drawing time 69.25 → 50.47 ms, frame rate 14.23 → 16.65 FPS.
+
 ## 1.7.1 — 2026-09-08
 
 - Add a Camaro picture before the original cracktro; Space or a mouse button closes it.

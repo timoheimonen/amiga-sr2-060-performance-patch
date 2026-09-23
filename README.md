@@ -1,8 +1,9 @@
 # Street Rod 2 — KS3.1 / AGA / 68060 patcher
 
-**Version 1.7.1** adds a Camaro opening picture and automatic executable
-compression using Python's built-in zlib. Includes the startup FPS menu
-and the KS3.1/AGA/68060 compatibility and performance fixes.
+**Version 1.8.0** fills the road polygons with the CPU, reaching the
+16.7 FPS limit in the heavy Mulholland scene. Includes the Camaro opening
+picture, zlib compression, the startup FPS menu and the KS3.1/AGA/68060
+compatibility and performance fixes.
 
 ## Requirements
 
@@ -33,15 +34,15 @@ restart. Intros, menus and the original save are preserved.
 
 Stationary Mulholland benchmark in FS-UAE 3.2.35 (PAL):
 
-| Metric | Original (A500) | 1.2.0 (68060) | 1.3.0 (68060) | 1.4.0 (68060) |
+| Metric | Original (A500) | 1.2.0 (68060) | 1.3.0 (68060) | 1.8.0 (68060) |
 | --- | ---: | ---: | ---: | ---: |
-| Mean frame time | 579.56 ms | 80.13 ms | 70.28 ms | 70.28 ms |
-| FPS | 1.73 | 12.48 | 14.23 | 14.23 |
+| Mean frame time | 579.56 ms | 80.13 ms | 70.28 ms | 60.04 ms |
+| FPS | 1.73 | 12.48 | 14.23 | 16.65 |
 
 Original: 68000/OCS, Kickstart 1.3, 512 KiB Chip + 512 KiB Slow RAM.
-Versions 1.2.0–1.4.0 use the A1200/68060 configuration listed above.
-**1.4.0 retains 1.3.0's performance in this scene**, about 14% higher FPS
-than 1.2.0 and 724.6% higher than the original A500 configuration.
+Versions 1.2.0–1.8.0 use the A1200/68060 configuration listed above.
+In 1.8.0 drawing takes 50.47 ms (1.7.1: 69.25 ms), so this scene runs at
+the default 16.7 FPS limit: 17% higher FPS than 1.3.0–1.7.1.
 The selected cap limits faster scenes to one frame per 3–6 PAL fields;
 slower frames receive no extra cap delay.
 
@@ -49,4 +50,4 @@ slower frames receive no extra cap delay.
 
 Timo Heimonen (timo.heimonen@proton.me) · [MIT License](LICENSE)
 
-Tools: Amitools, FS-UAE, Ghidra, OpenAI.
+Tools: Amitools, FS-UAE, Ghidra, Codex, Claude.

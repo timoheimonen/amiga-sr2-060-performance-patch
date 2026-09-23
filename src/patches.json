@@ -68,11 +68,11 @@
       "hunk_record_size_file_offset": "0x215ac",
       "payload_file_offset": "0x24be0",
       "original_size": "0x3630",
-      "patched_size": "0x3694",
-      "payload_size": 100,
+      "patched_size": "0x39e0",
+      "payload_size": 944,
       "payload_source": "SR2_ClippedLineTail.s",
-      "payload_sha256": "443a0a656fc77bd5852ea7289783b7bcd7a2ee58d97c2311c713df067b5b2fd9",
-      "description": "KS3.1 graphics.library Move-compatible clipped-line tail"
+      "payload_sha256": "40a02e4b12fadf6e2963115d912b969328fc799cbfa5e3ca015f1c871a0b7698",
+      "description": "KS3.1 graphics.library Move-compatible clipped-line tail and CPU fill for convex area polygons"
     }
   ],
   "patches": [
@@ -235,6 +235,28 @@
       "payload_hunk": 45,
       "payload_entry_offset": "0x0",
       "description": "Use the KS3.1 graphics.library 40.24 Move-compatible tail inside covered-span batches"
+    },
+    {
+      "id": "area_polygon_cpu_fill",
+      "ghidra_raw_address": "0x22450",
+      "hunk": 45,
+      "hunk_offset": "0x18c",
+      "file_offset": "0x2173c",
+      "expected_hex": "3c2c2410",
+      "replacement_hex": "61003506",
+      "payload_hunk": 45,
+      "payload_entry_offset": "0x64",
+      "description": "Fill the game's convex AreaEnd polygons with the CPU, reproducing the outline and fill pixels"
+    },
+    {
+      "id": "area_polygon_cpu_fill_return",
+      "ghidra_raw_address": "0x22454",
+      "hunk": 45,
+      "hunk_offset": "0x190",
+      "file_offset": "0x21740",
+      "expected_hex": "200648c0",
+      "replacement_hex": "60000088",
+      "description": "Skip AreaMove/AreaDraw/AreaEnd after a CPU fill; the fallback resumes at $22458"
     }
   ],
   "road_swap_audit": {
@@ -258,7 +280,7 @@
     "state_size": 20,
     "minimum_fields_offset": 1848
   },
-  "release_version": "1.7.1",
+  "release_version": "1.8.0",
   "startup_menu_audit": {
     "hunk": 10,
     "entry_offset": 1920,
@@ -277,13 +299,13 @@
     "module": "Python standard-library zlib",
     "level": 9,
     "wbits": -15,
-    "packer_source": "zlib_hunk.py",
+    "packer_source": "../patch.py (pack_hunk)",
     "loader_source": "SR2_ZlibLoader.s",
     "loader_sha256": "e8da43c0a12a7fdd6f5c2af2e09ab719c55538a1b75c73ba901c5f1f346587b1",
-    "unpacked_program_bytes": 271404,
-    "unpacked_program_sha256": "6b74a2ece30fabf22c54ea6c7ff461cd01ffe0f28d73342dccbb1d9cbd518644",
-    "packed_program_bytes": 149316,
-    "packed_program_sha256": "f1144853f7dc3d61fa3b9cba46212c76a7dd60482ec04470469a96699df2c1d8"
+    "unpacked_program_bytes": 272248,
+    "unpacked_program_sha256": "9f1b1d9275c5cc1081a76aaa013d7f441ce654aefe5a2498e720690defe0504f",
+    "packed_program_bytes": 149928,
+    "packed_program_sha256": "efb6e6e72e1d74fdf78fe4c4ea1679ee77dcb892caee9204619d3d87c4b19b57"
   },
   "splash": {
     "source_image_sha256": "7c406a0049279bb5ce9bd92c48ea49120a5d4f1139316597cb2949174b8034a6",
@@ -303,5 +325,5 @@
       "cracktro-planar.bin": "87c61db0a63c1503bf429c08454093a6ec009dcd0f197154f786cfcac80cf43b"
     }
   },
-  "patched_adf_sha256": "a74ad58f486f89195f0c2aa9399c36c0a8b00bf3bee348f767acc20fcd53b07c"
+  "patched_adf_sha256": "8afb6adf97a2d1c2b5f5357ffa6fdefdc4167cb880972e2b6ff1378aa028c7e5"
 }

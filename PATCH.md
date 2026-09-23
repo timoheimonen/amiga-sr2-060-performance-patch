@@ -1,8 +1,8 @@
-# Street Rod 2 1.7.1 — assembly patch details
+# Street Rod 2 1.8.0 — assembly patch details
 
-These five 68k assembly helpers implement the audio-timer fix, road-buffer
-timing and frame cap, covered-span drawing optimization and MC68060
-instruction-cache management in release 1.7.1. The startup menu is included
+These 68k assembly helpers implement the audio-timer fix, road-buffer
+timing and frame cap, covered-span drawing optimization, CPU road-polygon
+fill and MC68060 instruction-cache management in release 1.8.0. The startup menu is included
 in the instruction-cache and road-buffer payloads. They target PAL A1200/AGA
 with Kickstart 3.1 A1200 rev 40.68 and an MC68060.
 
@@ -155,6 +155,50 @@ redundant setup and library-call overhead. The direct state updates match
 `Move()` at ROM address `$f86fbc` in A1200 Kickstart 40.68; the byte at
 offset 30 is part of that ROM-specific contract.
 
+## SR2_AreaFill.s — fill road polygons with the CPU
+
+Source: [src/SR2_AreaFill.s](src/SR2_AreaFill.s), assembled into the HUNK 45
+payload after the clipped-line tail (entry offset `$64`).
+
+The game fills the road's convex polygons through `draw_area_polygon`
+(`$22412`) with `AreaMove()`, `AreaDraw()` and `AreaEnd()`. `AreaEnd()` has
+a large fixed cost per call: in the stationary Mulholland benchmark its 16
+calls took 26.9 ms of a 70 ms frame, more than 1 ms even for a 90-pixel
+triangle.
+
+Two patches replace that sequence. At `$22450`, after the original
+`SetAPen()`, AOlPen and AREAOUTLINE setup, a `BSR.W` enters the helper. The
+following instruction becomes a `BRA.W` to the original epilogue at
+`$224de`.
+
+The game sets AOlPen to the fill pen, so every row is covered from the
+leftmost to the rightmost outline pixel. The helper traces each edge with
+the blitter line rule used by `Draw()`: one pixel per major step and a
+minor step whenever the error term is non-negative. It keeps the row limits
+on the stack, calls `WaitBlit()` so earlier lines remain underneath, and
+writes each enabled plane with the pen bit (JAM1) using longword masks.
+The rule matched Kickstart 40.68 `AreaEnd()` output for 434 edge-case and
+random polygons, and both completed road buffers of the benchmark scene
+are byte-identical to release 1.7.1.
+
+The helper leaves the RastPort and AreaInfo as `AreaEnd()` would:
+
+| Field | Value |
+| --- | --- |
+| RastPort `CP_X`, `CP_Y` (36, 38) | First vertex |
+| RastPort flags (32) | `FRST_DOT` cleared |
+| RastPort line-pattern counter (30) | 15 minus the sum of the edges' major lengths |
+| AreaInfo `FirstX`, `FirstY` (20, 22) | First vertex |
+
+The original library path is used for an area pattern, a draw mode other
+than JAM1, a bitmap that is not longword aligned or has more than 128 rows,
+a vertex outside the bitmap, insufficient stack above the game's stack
+limit, or a layer that could clip or offset the drawing. A layer is
+accepted only at origin (0,0) without scrolling, super bitmap or clip
+region, and with one unobscured ClipRect covering the whole bitmap. The
+fallback replays the two displaced instructions and continues with
+`AreaMove()` at `$22458`.
+
 ## SR2_InstructionCache.s — manage the MC68060 I-cache
 
 Source: [src/SR2_InstructionCache.s](src/SR2_InstructionCache.s), appended
@@ -237,11 +281,11 @@ blocks, embedded in `PROGRAM_PATCHES` at original executable offsets
 
 ## Automatic zlib compression and opening picture
 
-Version 1.7.1 packs the locally patched game with Python's standard-library
+The release packs the locally patched game with Python's standard-library
 zlib (`level=9`, raw DEFLATE). `patch.py` contains the packer and the assembled
 68000 decoder, so using the patch requires no additional software. It does
-not embed the original game. The packed game is 149,316 bytes; the embedded
-Camaro picture and viewer occupy 106,620 bytes. Disk 1 has 16.5 KiB free.
+not embed the original game. The packed game is 149,928 bytes; the embedded
+Camaro picture and viewer occupy 106,620 bytes. Disk 1 has 15.5 KiB free.
 
 The decoder preserves every original HUNK allocation size and memory flag,
 restores the initialized bytes and 32-bit relocations, frees its temporary
@@ -254,8 +298,9 @@ and after decompression; allocation/checksum errors return code 20.
 mouse button to close the picture. The original cracktro is preserved. The
 startup sequence sets a 6,000-byte stack before launching the viewer.
 
-Sources are in `src/`: `zlib_hunk.py`, `SR2_ZlibLoader.s`, `SR2_Cracktro.s`
-and Keir Fraser's public-domain decoder under `inflate/`. The image is included
+The packer is `pack_hunk()` in `patch.py`. Sources are in `src/`:
+`SR2_ZlibLoader.s`, `SR2_Cracktro.s` and Keir Fraser's public-domain decoder
+under `inflate/`. The image is included
 only as planar/palette binary inputs and the embedded viewer, without the
 original JPG. `src/patches.json` records the source and payload checksums.
 
@@ -269,7 +314,7 @@ To rebuild and pack the viewer:
 
 ```sh
 vasmm68k_mot -m68000 -Fhunkexe -Isrc -o /tmp/SR2_SPLASH src/SR2_Cracktro.s
-python3 -c "from pathlib import Path; from src.zlib_hunk import pack; Path('/tmp/SR2_SPLASH.packed').write_bytes(pack(Path('/tmp/SR2_SPLASH').read_bytes()))"
+python3 -B -c "from pathlib import Path; from patch import pack_hunk; Path('/tmp/SR2_SPLASH.packed').write_bytes(pack_hunk(Path('/tmp/SR2_SPLASH').read_bytes()))"
 ```
 
 The release game output hash is checked after compression. Python builds

@@ -23,7 +23,7 @@ import tempfile
 import zlib
 
 
-VERSION = "1.7.1"
+VERSION = "1.8.0"
 
 BLOCK_SIZE = 512
 BLOCK_LONGS = BLOCK_SIZE // 4
@@ -46,20 +46,20 @@ SOURCE_ADF_SHA256 = (
     "4444796c1c9337baf16dffa982f1e66dc579a04d3e80a8ffa6a483b648e7bb1c"
 )
 PATCHED_ADF_SHA256 = (
-    "a74ad58f486f89195f0c2aa9399c36c0a8b00bf3bee348f767acc20fcd53b07c"
+    "8afb6adf97a2d1c2b5f5357ffa6fdefdc4167cb880972e2b6ff1378aa028c7e5"
 )
 SOURCE_PROGRAM_SHA256 = (
     "a345fb91144d1ee577dcd5c80a8a8aa3b0a4e777ed9b5b4308d3a2b36d8df3a8"
 )
 PATCHED_PROGRAM_SHA256 = (
-    "6b74a2ece30fabf22c54ea6c7ff461cd01ffe0f28d73342dccbb1d9cbd518644"
+    "9f1b1d9275c5cc1081a76aaa013d7f441ce654aefe5a2498e720690defe0504f"
 )
 TRAINER_SHA256 = (
     "648dbe599570549aea8dd7793d4d405db7f81eb96793e45e52dc22bc575f8e92"
 )
 
 
-PACKED_PROGRAM_SHA256 = "f1144853f7dc3d61fa3b9cba46212c76a7dd60482ec04470469a96699df2c1d8"
+PACKED_PROGRAM_SHA256 = "efb6e6e72e1d74fdf78fe4c4ea1679ee77dcb892caee9204619d3d87c4b19b57"
 SPLASH_SHA256 = "19c9b1de9e9f5fb2add8c8600d0977322c34c94c218f81c632f088bc74db0a8a"
 
 # User-supplied Camaro picture and its viewer; no packed original game.
@@ -1400,17 +1400,17 @@ SPLASH = base64.b85decode(
 )
 
 # Reproducible AmigaDOS modification time of the reference release:
-# 8 September 2026 00:00:00, represented as days, minutes and 1/50 s ticks
+# 23 September 2026 00:00:00, represented as days, minutes and 1/50 s ticks
 # since the Amiga epoch.  Fixed metadata makes every patched ADF identical.
-RELEASE_TIMESTAMP = (17782, 0, 0)
+RELEASE_TIMESTAMP = (17797, 0, 0)
 
 STARTUP_SEQUENCE = b""";c:SetPatch >NIL: r ;patch system functions
 Stack 6000
 SR2_SPLASH
 img.cru
 Echo ""
-Echo "KS3.1/AGA/060 patch 1.7.1 by Timo Heimonen"
-Echo "(timo.heimonen@proton.me) - 08.09.2026"
+Echo "KS3.1/AGA/060 patch 1.8.0 by Timo Heimonen"
+Echo "(timo.heimonen@proton.me) - 23.09.2026"
 Stack 6000
 SetMap usa1
 SetClock >NIL: Opt load
@@ -1420,7 +1420,7 @@ LOADWB
 endcli > nil:
 """
 
-# Embedded 1.7.1 helpers; no assembler or external packages required.
+# Embedded 1.8.0 helpers; no assembler or external packages required.
 PAYLOAD_10 = bytes.fromhex(
     "2f0247fa01344a6cbf766700009c4a536710202cdf4a90ab0008b0ab"
     "00106d00007c203900dff004e088024001ff0c40012c620000686100"
@@ -1481,7 +1481,35 @@ PAYLOAD_45 = bytes.fromhex(
     "205f5488b7fc535232306708b7fc53523231661e0c6d000f00106610b7fc"
     "535232316720267c535232316006267c535232302f0841e8321a4e90205f"
     "302d001054884ed043ecfb303347002433460026006900010020137c000f"
-    "001e41e800244ed04e71"
+    "001e41e800244ed04e7148e7303043ecfb304aa900086600032e4a29001c"
+    "660003262069000438107003c044660003183a2800020c4500806200030c"
+    "70001028000553406b0003000c400007620002f845e80008221a02410003"
+    "660002ea51c8fff4e74c2011675a20404aa80010660002d64aa8002c6600"
+    "02ce4aa80020660002c64aa8007e660002be20280008670002b620404a90"
+    "660002ae4aa80008660002a64aa800106600029e302800145240b0446d00"
+    "0292302800165240b0456d000286362c2450534345ec24103c3c7fff7eff"
+    "301ab0446400026e321ab24564000266b2466c023c01b2476f023e0151cb"
+    "ffe23607964630035240e54848c0220f9280048100000100b2acf12c6500"
+    "02389ec0264f3006e548244f94c0203c7fffffff303cffff26c051cbfffc"
+    "48a703004267362c245053434dec24103016322e0002588e4a43660641ec"
+    "24106002204e381098403a2800029a417c014a446c0444447cff7e014a45"
+    "6c0444457eff3f03b8456d0000643604d96f0002da4534059444d8449845"
+    "444447f21400b0536c023680b06b00026f04374000024a426b1cb0536c02"
+    "3680b06b00026f0437400002d247d444d04651cbffd0605ad445d04651cb"
+    "ffda9046b0536c023680b06b00026f0437400002603e3605db6f0002d844"
+    "34049445da459a44444547f21400b0536c023680b06b00026f0437400002"
+    "4a426b0cd046d445d24751cbffe06008d444d24751cbffd6361f51cbff22"
+    "43ecfb30700f905f1340001e08a900000021202c24102340002422290010"
+    "67062041214000142c6c9c584eaeff1c4c9f00c09e4647f2640043ecfb30"
+    "2c6900047a003a16ccc53f074fefffb8204f45ef002412290018342c2452"
+    "7800b82e0005641a090167123004e548203600080902670420c0600224c0"
+    "524460e042904292204f45ef00243607301b321b3800ea4c0240001f74ff"
+    "e0aa3001ea48904446410241001f7effe3af2207e54c48c4d8864a406620"
+    "c4812c482e1e6708224785b1480060f446822c4a2e1e67462247c5b14800"
+    "60f453402c482e1e67182247d3c485993e00600622fcffffffff51cffff8"
+    "839160e4468146822c4a2e1e67142247d3c4c5993e006002429951cffffc"
+    "c39160e8dc8551cbff724fef00483e1f5247e54fdec74cdf0c0c4e754cdf"
+    "0c0c3c2c2410200648c058974e75"
 )
 
 PROGRAM_PATCHES = (
@@ -1514,6 +1542,10 @@ PROGRAM_PATCHES = (
     (0x1d02a, bytes.fromhex("00ec"), bytes.fromhex("08ec")),
     # Use the KS3.1 graphics.library 40.24 Move-compatible tail inside covered-span batches
     (0x2192a, bytes.fromhex("4eba321e302d"), bytes.fromhex("610032b44e71")),
+    # Fill the game's convex AreaEnd polygons with the CPU, reproducing the outline and fill pixels
+    (0x2173c, bytes.fromhex("3c2c2410"), bytes.fromhex("61003506")),
+    # Skip AreaMove/AreaDraw/AreaEnd after a CPU fill; the fallback resumes at $22458
+    (0x21740, bytes.fromhex("200648c0"), bytes.fromhex("60000088")),
 )
 
 HUNK_SIZE_PATCHES = (
@@ -1525,8 +1557,8 @@ HUNK_SIZE_PATCHES = (
     (0x144, 0xcd3, 0xcf7),
     (0xbc, 0x1711, 0x1716),
     (0x1b3cc, 0x1711, 0x1716),
-    (0xc8, 0xd8c, 0xda5),
-    (0x215ac, 0xd8c, 0xda5),
+    (0xc8, 0xd8c, 0xe78),
+    (0x215ac, 0xd8c, 0xe78),
 )
 
 HUNK_PAYLOADS = (
@@ -1628,7 +1660,7 @@ def patch_program(source: bytes) -> bytes:
     for offset, payload in HUNK_PAYLOADS:
         result[offset:offset] = payload
 
-    if len(result) != 271404 or sha256(result) != PATCHED_PROGRAM_SHA256:
+    if len(result) != 272248 or sha256(result) != PATCHED_PROGRAM_SHA256:
         raise PatchError("internal STREET_ROD result verification failed")
     return bytes(result)
 
@@ -2165,8 +2197,8 @@ def compress_program(program: bytes) -> bytes:
         packed = pack_hunk(program)
     except (ValueError, zlib.error) as error:
         raise PatchError(f"zlib packing failed: {error}") from error
-    if len(packed) != 149316 or sha256(packed) != PACKED_PROGRAM_SHA256:
-        raise PatchError("packed executable does not match release 1.7.1 "
+    if len(packed) != 149928 or sha256(packed) != PACKED_PROGRAM_SHA256:
+        raise PatchError("packed executable does not match release 1.8.0 "
                          f"(zlib {zlib.ZLIB_RUNTIME_VERSION})")
     return packed
 
