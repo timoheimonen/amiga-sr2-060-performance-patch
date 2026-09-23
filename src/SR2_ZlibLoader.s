@@ -1,4 +1,4 @@
-; Self-extracting HUNK entry, assembled once and embedded by zlib_hunk.py.
+; Self-extracting HUNK entry, assembled once and embedded by patch.py.
 ; Python supplies raw DEFLATE, original allocation words and relocation records.
 ; DOS allocates all original hunks plus this loader, and frees them on UnLoadSeg.
 ; Preserve ALL entry registers including D0/A0 CLI arguments. KS3.1 required.

@@ -59,4 +59,8 @@ _clipped_line_tail_dispatch
         jmp     (a0)
 
         CNOP    0,4
+
+        * Entry offset $64 of this HUNK 45 payload.
+        INCLUDE "SR2_AreaFill.s"
+
         END
