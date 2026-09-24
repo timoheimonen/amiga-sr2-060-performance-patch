@@ -2,6 +2,11 @@
 
 Changes to the standalone Street Rod 2 Kickstart 3.1 / PAL AGA / MC68060 patcher.
 
+## 1.8.2 — 2026-09-24
+
+- Remove the Camaro opening picture; on some systems it left the screen black until a mouse click.
+- Remove compression; the game is stored unpacked and starts with the original cracktro.
+
 ## 1.8.1 — 2026-09-24
 
 - Speed up the covered-section span fill with a direct loop; pixels are unchanged.

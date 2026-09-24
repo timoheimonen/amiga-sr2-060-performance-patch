@@ -1,4 +1,4 @@
-# FS-UAE setup for version 1.8.1
+# FS-UAE setup for version 1.8.2
 
 Use FS-UAE 3.2.35 with PAL A1200/AGA and an MC68060. This image is not for
 stock 68020, KS1.3 or OCS configurations.
@@ -28,12 +28,6 @@ uae_sound_output = exact
 
 Select PAL. The patcher does not check the emulator's CPU or chipset settings.
 
-## Opening picture
-
-The Camaro picture appears before the original cracktro. Press and release
-Space or a mouse button to continue. It uses PAL 640×512 with 16 colours.
-The picture and game decompress automatically at startup.
-
 ## Startup FPS menu
 
 The menu appears in the AmigaDOS window before the game's own intros.
@@ -62,9 +56,9 @@ All ADFs are 901,120 bytes. The Kickstart ROM is 512 KiB.
 | --- | --- |
 | Original Disk 1 | `4444796c1c9337baf16dffa982f1e66dc579a04d3e80a8ffa6a483b648e7bb1c` |
 | Original Disk 2 | `32e15a76642f81d9b923fef5c94e35b55d78b193b8bdd7640a7cba276d83f0ec` |
-| Patched Disk 1 (1.8.1) | `2ffd2d717023f99307451394b0a75d94601aa8a9e77924d18a01a12c0c0cde60` |
+| Patched Disk 1 (1.8.2) | `2a40b6fcfcb365a5a4c20dfe1bec06876218ec011764b0277126402c9036a8d0` |
 | Kickstart 3.1 A1200 rev 40.68 | `6d43840d4099a74170ea0f0425b6257c3891ebcaa39c4d1840075a9ab22b5707` |
 
 The patcher verifies Disk 1, original instructions, HUNK sizes, the resulting
-unpacked and packed executables, embedded picture, final ADF, and file read-back. Fixed filesystem timestamps make the
-output reproducible for the release compression output. Disk 2 and the ROM are not read or verified by the patcher.
+executable, final ADF, and file read-back. Fixed filesystem timestamps make the
+output reproducible. Disk 2 and the ROM are not read or verified by the patcher.
