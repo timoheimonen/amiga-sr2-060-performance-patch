@@ -23,7 +23,7 @@ import tempfile
 import zlib
 
 
-VERSION = "1.8.0"
+VERSION = "1.8.1"
 
 BLOCK_SIZE = 512
 BLOCK_LONGS = BLOCK_SIZE // 4
@@ -46,20 +46,20 @@ SOURCE_ADF_SHA256 = (
     "4444796c1c9337baf16dffa982f1e66dc579a04d3e80a8ffa6a483b648e7bb1c"
 )
 PATCHED_ADF_SHA256 = (
-    "8afb6adf97a2d1c2b5f5357ffa6fdefdc4167cb880972e2b6ff1378aa028c7e5"
+    "2ffd2d717023f99307451394b0a75d94601aa8a9e77924d18a01a12c0c0cde60"
 )
 SOURCE_PROGRAM_SHA256 = (
     "a345fb91144d1ee577dcd5c80a8a8aa3b0a4e777ed9b5b4308d3a2b36d8df3a8"
 )
 PATCHED_PROGRAM_SHA256 = (
-    "9f1b1d9275c5cc1081a76aaa013d7f441ce654aefe5a2498e720690defe0504f"
+    "1aa7d7c8d44cb7f9bb2048431deef5d56803f794e82239cb25bd2903ffd51463"
 )
 TRAINER_SHA256 = (
     "648dbe599570549aea8dd7793d4d405db7f81eb96793e45e52dc22bc575f8e92"
 )
 
 
-PACKED_PROGRAM_SHA256 = "efb6e6e72e1d74fdf78fe4c4ea1679ee77dcb892caee9204619d3d87c4b19b57"
+PACKED_PROGRAM_SHA256 = "34d1ec3b0fcabb41eadd5dee22a841cc4bf14de4e7363c604310cbf1216d2634"
 SPLASH_SHA256 = "19c9b1de9e9f5fb2add8c8600d0977322c34c94c218f81c632f088bc74db0a8a"
 
 # User-supplied Camaro picture and its viewer; no packed original game.
@@ -1400,17 +1400,17 @@ SPLASH = base64.b85decode(
 )
 
 # Reproducible AmigaDOS modification time of the reference release:
-# 23 September 2026 00:00:00, represented as days, minutes and 1/50 s ticks
+# 24 September 2026 00:00:00, represented as days, minutes and 1/50 s ticks
 # since the Amiga epoch.  Fixed metadata makes every patched ADF identical.
-RELEASE_TIMESTAMP = (17797, 0, 0)
+RELEASE_TIMESTAMP = (17798, 0, 0)
 
 STARTUP_SEQUENCE = b""";c:SetPatch >NIL: r ;patch system functions
 Stack 6000
 SR2_SPLASH
 img.cru
 Echo ""
-Echo "KS3.1/AGA/060 patch 1.8.0 by Timo Heimonen"
-Echo "(timo.heimonen@proton.me) - 23.09.2026"
+Echo "KS3.1/AGA/060 patch 1.8.1 by Timo Heimonen"
+Echo "(timo.heimonen@proton.me) - 24.09.2026"
 Stack 6000
 SetMap usa1
 SetClock >NIL: Opt load
@@ -1420,7 +1420,7 @@ LOADWB
 endcli > nil:
 """
 
-# Embedded 1.8.0 helpers; no assembler or external packages required.
+# Embedded 1.8.1 helpers; no assembler or external packages required.
 PAYLOAD_10 = bytes.fromhex(
     "2f0247fa01344a6cbf766700009c4a536710202cdf4a90ab0008b0ab"
     "00106d00007c203900dff004e088024001ff0c40012c620000686100"
@@ -1474,7 +1474,15 @@ PAYLOAD_0 = bytes.fromhex(
 )
 
 PAYLOAD_42 = bytes.fromhex(
-    "205f48e73710267c535232303e2d000858884ed0"
+    "205f48e73710267c535232303e2d000858884ed048e73f304caf007c0024"
+    "b4436d02c543b46cd70a6c04342cd70ab66cd7106f04362cd710b6426d00"
+    "00b8b86cd70c6c04382cd70cba6cd70e6f043a2cd70eba446d00009e9a44"
+    "cafc0028c8fc0028266cfb94266b0004266b0008d7c43e02ea4f3003ea48"
+    "90473240e54f0242001f70ffe4a8240046430243001f70ffe7a826003009"
+    "6602c48378033005e20e642441f30000d0c78598320967105341600620fc"
+    "ffffffff51c9fff88790044000286ade60264682468341f30000d0c7c598"
+    "3209670c53416002429851c9fffcc790044000286ae24682468347eb0fa0"
+    "51ccffaa4cdf0cfc4e754e71"
 )
 
 PAYLOAD_45 = bytes.fromhex(
@@ -1546,6 +1554,18 @@ PROGRAM_PATCHES = (
     (0x2173c, bytes.fromhex("3c2c2410"), bytes.fromhex("61003506")),
     # Skip AreaMove/AreaDraw/AreaEnd after a CPU fill; the fallback resumes at $22458
     (0x21740, bytes.fromhex("200648c0"), bytes.fromhex("60000088")),
+    # Call the direct covered-span fill instead of FUN_00001798
+    (0x1cea4, bytes.fromhex("4eba40d6"), bytes.fromhex("4eba4182")),
+    # Call the direct covered-span fill instead of FUN_00001798
+    (0x1cebc, bytes.fromhex("4eba40be"), bytes.fromhex("4eba416a")),
+    # Call the direct covered-span fill instead of FUN_00001798
+    (0x1ceda, bytes.fromhex("4eba40a0"), bytes.fromhex("4eba414c")),
+    # Call the direct covered-span fill instead of FUN_00001798
+    (0x1d06e, bytes.fromhex("4eba3f0c"), bytes.fromhex("4eba3fb8")),
+    # Call the direct covered-span fill instead of FUN_00001798
+    (0x1d084, bytes.fromhex("4eba3ef6"), bytes.fromhex("4eba3fa2")),
+    # Call the direct covered-span fill instead of FUN_00001798
+    (0x1d0a2, bytes.fromhex("4eba3ed8"), bytes.fromhex("4eba3f84")),
 )
 
 HUNK_SIZE_PATCHES = (
@@ -1555,8 +1575,8 @@ HUNK_SIZE_PATCHES = (
     (0xf6f4, 0x6c4, 0x6df),
     (0x14, 0xcd3, 0xcf7),
     (0x144, 0xcd3, 0xcf7),
-    (0xbc, 0x1711, 0x1716),
-    (0x1b3cc, 0x1711, 0x1716),
+    (0xbc, 0x1711, 0x1750),
+    (0x1b3cc, 0x1711, 0x1750),
     (0xc8, 0xd8c, 0xe78),
     (0x215ac, 0xd8c, 0xe78),
 )
@@ -1660,7 +1680,7 @@ def patch_program(source: bytes) -> bytes:
     for offset, payload in HUNK_PAYLOADS:
         result[offset:offset] = payload
 
-    if len(result) != 272248 or sha256(result) != PATCHED_PROGRAM_SHA256:
+    if len(result) != 272480 or sha256(result) != PATCHED_PROGRAM_SHA256:
         raise PatchError("internal STREET_ROD result verification failed")
     return bytes(result)
 
@@ -2197,8 +2217,8 @@ def compress_program(program: bytes) -> bytes:
         packed = pack_hunk(program)
     except (ValueError, zlib.error) as error:
         raise PatchError(f"zlib packing failed: {error}") from error
-    if len(packed) != 149928 or sha256(packed) != PACKED_PROGRAM_SHA256:
-        raise PatchError("packed executable does not match release 1.8.0 "
+    if len(packed) != 150108 or sha256(packed) != PACKED_PROGRAM_SHA256:
+        raise PatchError("packed executable does not match release 1.8.1 "
                          f"(zlib {zlib.ZLIB_RUNTIME_VERSION})")
     return packed
 
