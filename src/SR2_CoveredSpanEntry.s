@@ -19,4 +19,9 @@ _covered_span_batch_entry
         jmp     (a0)
 
         CNOP    0,4
+
+        * Entry offset $14 of this HUNK 42 payload.
+        INCLUDE "SR2_SpanFill.s"
+
+        CNOP    0,4
         END

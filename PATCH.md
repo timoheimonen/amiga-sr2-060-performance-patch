@@ -1,8 +1,8 @@
-# Street Rod 2 1.8.0 — assembly patch details
+# Street Rod 2 1.8.1 — assembly patch details
 
 These 68k assembly helpers implement the audio-timer fix, road-buffer
-timing and frame cap, covered-span drawing optimization, CPU road-polygon
-fill and MC68060 instruction-cache management in release 1.8.0. The startup menu is included
+timing and frame cap, covered-span drawing optimizations, CPU road-polygon
+fill and MC68060 instruction-cache management in release 1.8.1. The startup menu is included
 in the instruction-cache and road-buffer payloads. They target PAL A1200/AGA
 with Kickstart 3.1 A1200 rev 40.68 and an MC68060.
 
@@ -125,6 +125,29 @@ state is not yet prepared. Keeping the marker in `A3` lets the two helpers
 share this state without a private global variable or a cross-HUNK
 relocation. A companion patch to the original epilogue adds `A3` to the
 register-restore mask, preserving the caller's value on return.
+
+## SR2_SpanFill.s — direct covered-span fill
+
+Source: [src/SR2_SpanFill.s](src/SR2_SpanFill.s), assembled into the HUNK 42
+payload after the covered-span entry (entry offset `$14`).
+
+`FUN_00001798` fills a rectangle of the four road planes for the covered
+sections. For every row and plane it called a dispatcher, a set or clear
+subroutine and a computed jump into an unrolled store table. The six calls
+in `draw_covered_span_frame` and `draw_covered_span_cap` (`$1dd50`,
+`$1dd68`, `$1dd86`, `$1df1a`, `$1df30`, `$1df4e`) are `JSR (d16,PC)`
+instructions to a thunk; their displacements now point to the new routine.
+Other callers keep the original.
+
+The routine keeps the original contract: word arguments x1, x2, y1, y2 and
+colour on the stack; x ordered and clamped to the view limits at
+`A4-$28f6`/`A4-$28f0`; y1 clamped to the top and y2 to the bottom limit at
+`A4-$28f4`/`A4-$28f2`; Planes[0] from the BitMap at `4(-$46c(A4))`, 40-byte
+rows and a fixed 4,000-byte plane step; colour bits 0–3 set or clear the
+planes. It saves `D2–D7/A2–A3` and leaves the arguments for the caller. The
+edge masks are computed once, and each plane is filled in one direct row
+loop. The result matches the original routine byte for byte, and drawing in
+the Mulholland benchmark scene is 3.9 ms shorter.
 
 ## SR2_ClippedLineTail.s — avoid repeated line setup
 
@@ -284,7 +307,7 @@ blocks, embedded in `PROGRAM_PATCHES` at original executable offsets
 The release packs the locally patched game with Python's standard-library
 zlib (`level=9`, raw DEFLATE). `patch.py` contains the packer and the assembled
 68000 decoder, so using the patch requires no additional software. It does
-not embed the original game. The packed game is 149,928 bytes; the embedded
+not embed the original game. The packed game is 150,108 bytes; the embedded
 Camaro picture and viewer occupy 106,620 bytes. Disk 1 has 15.5 KiB free.
 
 The decoder preserves every original HUNK allocation size and memory flag,
