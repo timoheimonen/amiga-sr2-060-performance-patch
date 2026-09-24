@@ -32,7 +32,7 @@ restart. Intros, menus and the original save are preserved.
 
 ## Performance
 
-Stationary Mulholland benchmark in FS-UAE 3.2.35 (PAL):
+Mulholland benchmark in FS-UAE 3.2.35 (PAL):
 
 | Metric | Original (A500) | 1.2.0 (68060) | 1.3.0 (68060) | 1.8.0 (68060) |
 | --- | ---: | ---: | ---: | ---: |
@@ -49,5 +49,3 @@ slower frames receive no extra cap delay.
 [Changelog](CHANGELOG.md) · [Checksums](FS-UAE.md#checksums) · [Patch details](PATCH.md) · [Patch source](src)
 
 Timo Heimonen (timo.heimonen@proton.me) · [MIT License](LICENSE)
-
-Tools: Amitools, FS-UAE, Ghidra, Codex, Claude.
