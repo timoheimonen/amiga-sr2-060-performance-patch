@@ -1,8 +1,8 @@
-# Street Rod 2 1.8.1 — assembly patch details
+# Street Rod 2 1.8.2 — assembly patch details
 
 These 68k assembly helpers implement the audio-timer fix, road-buffer
 timing and frame cap, covered-span drawing optimizations, CPU road-polygon
-fill and MC68060 instruction-cache management in release 1.8.1. The startup menu is included
+fill and MC68060 instruction-cache management in release 1.8.2. The startup menu is included
 in the instruction-cache and road-buffer payloads. They target PAL A1200/AGA
 with Kickstart 3.1 A1200 rev 40.68 and an MC68060.
 
@@ -302,43 +302,8 @@ and X is preserved. HUNK sizes and relocations remain unchanged.
 blocks, embedded in `PROGRAM_PATCHES` at original executable offsets
 `0xb750` and `0xb764`.
 
-## Automatic zlib compression and opening picture
+## Disk layout
 
-The release packs the locally patched game with Python's standard-library
-zlib (`level=9`, raw DEFLATE). `patch.py` contains the packer and the assembled
-68000 decoder, so using the patch requires no additional software. It does
-not embed the original game. The packed game is 150,108 bytes; the embedded
-Camaro picture and viewer occupy 106,620 bytes. Disk 1 has 15.5 KiB free.
-
-The decoder preserves every original HUNK allocation size and memory flag,
-restores the initialized bytes and 32-bit relocations, frees its temporary
-buffer and clears the instruction cache. All entry registers and the stack
-are restored, including the command-line arguments. The decoder remains in
-one extra DOS-owned segment until the program exits. It checks Adler32 before
-and after decompression; allocation/checksum errors return code 20.
-
-`SR2_SPLASH` runs before the original `img.cru`. Press and release Space or a
-mouse button to close the picture. The original cracktro is preserved. The
-startup sequence sets a 6,000-byte stack before launching the viewer.
-
-The packer is `pack_hunk()` in `patch.py`. Sources are in `src/`:
-`SR2_ZlibLoader.s`, `SR2_Cracktro.s` and Keir Fraser's public-domain decoder
-under `inflate/`. The image is included
-only as planar/palette binary inputs and the embedded viewer, without the
-original JPG. `src/patches.json` records the source and payload checksums.
-
-To rebuild the embedded decoder (development only):
-
-```sh
-vasmm68k_mot -m68000 -Fbin -Isrc -o /tmp/SR2_ZlibLoader.bin src/SR2_ZlibLoader.s
-```
-
-To rebuild and pack the viewer:
-
-```sh
-vasmm68k_mot -m68000 -Fhunkexe -Isrc -o /tmp/SR2_SPLASH src/SR2_Cracktro.s
-python3 -B -c "from pathlib import Path; from patch import pack_hunk; Path('/tmp/SR2_SPLASH.packed').write_bytes(pack_hunk(Path('/tmp/SR2_SPLASH').read_bytes()))"
-```
-
-The release game output hash is checked after compression. Python builds
-using zlib 1.2.12 and 1.3.1 produce the same release bytes.
+The patched game is stored unpacked as `STREET_ROD`. The startup sequence runs
+the original `img.cru` cracktro, prints the patch banner and starts the game.
+Disk 1 is full after patching; the original save is preserved.
