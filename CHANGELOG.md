@@ -10,12 +10,10 @@ Changes to the standalone Street Rod 2 Kickstart 3.1 / PAL AGA / MC68060 patcher
 ## 1.8.1 — 2026-09-24
 
 - Speed up the covered-section span fill with a direct loop; pixels are unchanged.
-- Drawing in the heavy Mulholland benchmark scene: 52.12 → 48.25 ms. With the frame-rate limit removed, the scene runs at 20.0 FPS (1.8.0: 18.1 FPS).
 
 ## 1.8.0 — 2026-09-23
 
 - Fill the road polygons with the CPU instead of `AreaEnd()`, producing identical pixels.
-- Reach the 16.7 FPS limit in the heavy Mulholland benchmark scene: drawing time 69.25 → 50.47 ms, frame rate 14.23 → 16.65 FPS.
 
 ## 1.7.1 — 2026-09-08
 
@@ -45,8 +43,6 @@ Changes to the standalone Street Rod 2 Kickstart 3.1 / PAL AGA / MC68060 patcher
 ## 1.3.0 — 2026-09-06
 
 - Reduce road-buffer swap waiting with safe PAL raster timing and buffer-reuse protection.
-- Achieve **14% higher FPS** (12.48 → 14.23) in the stationary Mulholland
-  [FS-UAE benchmark](README.md#performance).
 - Update the patcher, assembler source, startup banner and reproducible output hashes.
 
 ## 1.2.0

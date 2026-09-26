@@ -146,8 +146,7 @@ colour on the stack; x ordered and clamped to the view limits at
 rows and a fixed 4,000-byte plane step; colour bits 0–3 set or clear the
 planes. It saves `D2–D7/A2–A3` and leaves the arguments for the caller. The
 edge masks are computed once, and each plane is filled in one direct row
-loop. The result matches the original routine byte for byte, and drawing in
-the Mulholland benchmark scene is 3.9 ms shorter.
+loop. The result matches the original routine byte for byte.
 
 ## SR2_ClippedLineTail.s — avoid repeated line setup
 
@@ -185,9 +184,7 @@ payload after the clipped-line tail (entry offset `$64`).
 
 The game fills the road's convex polygons through `draw_area_polygon`
 (`$22412`) with `AreaMove()`, `AreaDraw()` and `AreaEnd()`. `AreaEnd()` has
-a large fixed cost per call: in the stationary Mulholland benchmark its 16
-calls took 26.9 ms of a 70 ms frame, more than 1 ms even for a 90-pixel
-triangle.
+a large fixed cost per call, even for small polygons.
 
 Two patches replace that sequence. At `$22450`, after the original
 `SetAPen()`, AOlPen and AREAOUTLINE setup, a `BSR.W` enters the helper. The
@@ -201,8 +198,8 @@ minor step whenever the error term is non-negative. It keeps the row limits
 on the stack, calls `WaitBlit()` so earlier lines remain underneath, and
 writes each enabled plane with the pen bit (JAM1) using longword masks.
 The rule matched Kickstart 40.68 `AreaEnd()` output for 434 edge-case and
-random polygons, and both completed road buffers of the benchmark scene
-are byte-identical to release 1.7.1.
+random polygons, and completed road buffers are byte-identical to release
+1.7.1.
 
 The helper leaves the RastPort and AreaInfo as `AreaEnd()` would:
 
